@@ -150,40 +150,40 @@
       z-index: 2;
     }
 
-    @keyframes logoLightSweep {
-      0% { left: -130%; }
-      45%, 100% { left: 165%; }
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #93C5FD; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3B82F6; }
-
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* Hero Circuit Pattern (Toned Down & Eye-Safe) */
+    /* Hero Circuit Pattern (Modern Executive Mesh & Eye-Safe) */
     .hero-circuit-bg {
       background-image:
-        radial-gradient(circle at 86% 18%, rgba(255, 255, 255, 0.08) 0%, transparent 45%),
-        radial-gradient(circle at 72% 85%, rgba(148, 163, 184, 0.12) 0%, transparent 50%),
-        linear-gradient(125deg, var(--theme-dark-from) 0%, var(--theme-dark-mid) 52%, var(--theme-dark-to) 100%);
+        radial-gradient(circle at 88% 14%, rgba(56, 189, 248, 0.16) 0%, transparent 42%),
+        radial-gradient(circle at 12% 88%, rgba(99, 102, 241, 0.14) 0%, transparent 48%),
+        linear-gradient(130deg, var(--theme-dark-from) 0%, var(--theme-dark-mid) 52%, var(--theme-dark-to) 100%);
     }
 
     .product-card {
-      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease;
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
     }
     .product-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px -10px rgba(36, 59, 83, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 38px -12px rgba(15, 23, 42, 0.11), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
     }
 
     .nav-pill-active {
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid rgba(255, 255, 255, 0.32);
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.1) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
       color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .modern-glass-pill {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .modern-glass-pill:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateX(3px);
     }
 
     @keyframes floatSlow {
@@ -254,45 +254,45 @@
   <!-- ========================================================= -->
   <div id="blokkod3FullAppRoot">
 
-    <!-- TOP STICKY NAVBAR -->
-    <header class="sticky top-0 z-40 blok-shape-box border-b backdrop-blur-md bg-white/95 px-4 lg:px-6 py-3 shadow-2xs">
-      <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
+    <!-- TOP STICKY NAVBAR (MODERN FROSTED GLASS) -->
+    <header class="sticky top-0 z-40 blok-shape-box border-b backdrop-blur-xl bg-white/90 px-4 lg:px-8 py-3.5 shadow-[0_4px_24px_rgba(15,23,42,0.03)]">
+      <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-4">
 
         <!-- BRAND LOGO BLOKKOD3 (WARNA ASLI DIKUNCI + EFEK CAHAYA MELINTAS + 25x KLIK RAHASIA ADMIN) -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3.5">
           <div id="brandLogoSecretTrigger"
                onclick="handleBrandLogoClick(event)"
-               class="flex items-center gap-3 text-left group select-none cursor-pointer focus:outline-none"
+               class="flex items-center gap-3.5 text-left group select-none cursor-pointer focus:outline-none"
                role="button"
                tabindex="0">
-            <div class="blokkod3-logo-badge w-12 h-12 rounded-full flex flex-col items-center justify-center shadow-md border-2 transition-transform duration-200 group-active:scale-95 shrink-0 pointer-events-none">
+            <div class="blokkod3-logo-badge w-12 h-12 rounded-full flex flex-col items-center justify-center shadow-lg border-2 transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95 shrink-0 pointer-events-none">
               <span class="blokkod3-text-gradient font-extrabold italic text-[13px] leading-[1.02] tracking-tight pointer-events-none">blok</span>
               <span class="blokkod3-text-gradient font-extrabold italic text-[13px] leading-[1.02] tracking-tight pointer-events-none">kod3</span>
             </div>
             <div class="pointer-events-none">
               <div class="flex items-center gap-2">
                 <span class="text-lg sm:text-xl font-extrabold tracking-tight shape-title">blokkod3</span>
-                <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100 text-slate-700 border border-slate-200">
+                <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100/90 text-slate-700 border border-slate-200/80 tracking-wide">
                   SD • SMP • SMA • Umum
                 </span>
               </div>
-              <p class="text-[11px] shape-muted font-medium">Portal Informatika, Koding AI, IoT &amp; Vibe Coding</p>
+              <p class="text-[11px] shape-muted font-medium tracking-tight">Portal Informatika, Koding AI, IoT &amp; Vibe Coding</p>
             </div>
           </div>
         </div>
 
-        <!-- GLOBAL SEARCH BAR -->
+        <!-- GLOBAL SEARCH BAR (ELEGAN & MODERN) -->
         <div class="order-3 md:order-2 w-full md:w-auto md:flex-1 max-w-xl">
-          <div class="relative flex items-center">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"></i>
+          <div class="relative flex items-center group">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 group-focus-within:text-blue-600 absolute left-4 pointer-events-none transition-colors"></i>
             <input id="globalSearchInput"
                    type="text"
                    oninput="handleSearch(this.value)"
                    placeholder="Cari modul PDF, video YouTube, aplikasi, IoT, kelas GAS &amp; Claude..."
-                   class="w-full pl-10 pr-20 py-2 rounded-full bg-slate-100/90 hover:bg-slate-100 focus:bg-white text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 border border-slate-200/80 focus:border-blue-500 focus:outline-none transition" />
+                   class="w-full pl-11 pr-20 py-2.5 rounded-2xl bg-slate-100/75 hover:bg-slate-100 focus:bg-white text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 border border-slate-200/80 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all duration-200" />
             <button type="button"
                     onclick="resetAllFilters()"
-                    class="absolute right-2 px-2.5 py-1 rounded-full text-[11px] font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-200/70 transition">
+                    class="absolute right-2 px-3 py-1 rounded-xl text-[11px] font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-200/70 transition">
               Reset
             </button>
           </div>
@@ -411,35 +411,37 @@
     <!-- ========================================================= -->
     <!-- SISI PENGGUNA (USER PORTAL VIEW)                          -->
     <!-- ========================================================= -->
-    <main id="userPortalView" class="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-6 py-5">
+    <main id="userPortalView" class="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6">
       <div class="flex flex-col lg:flex-row gap-6 items-start">
 
         <!-- LEFT SIDEBAR NAVIGATION (DAPAT DISEMBUNYIKAN / DITAMPILKAN) -->
-        <aside id="leftSidebarContainer" class="w-full lg:w-64 shrink-0 blok-dark-surface text-white rounded-3xl p-4 shadow-md transition-all duration-300">
-          <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/15">
-            <div class="flex items-center gap-2">
-              <i data-lucide="layers" class="w-4 h-4 text-sky-300"></i>
+        <aside id="leftSidebarContainer" class="w-full lg:w-64 shrink-0 blok-dark-surface text-white rounded-3xl p-4.5 shadow-[0_14px_34px_-10px_rgba(15,23,42,0.22)] border border-white/10 transition-all duration-300">
+          <div class="flex items-center justify-between pb-3.5 mb-3.5 border-b border-white/15">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-xl bg-white/15 flex items-center justify-center">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-300"></i>
+              </div>
               <span class="text-xs font-extrabold uppercase tracking-wider text-sky-100">Navigasi Materi</span>
             </div>
             <button type="button"
                     onclick="toggleSidebarNavigation(false)"
-                    class="p-1 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition"
+                    class="p-1.5 rounded-xl hover:bg-white/15 text-white/80 hover:text-white transition"
                     title="Sembunyikan Navigasi">
               <i data-lucide="panel-left-close" class="w-4 h-4"></i>
             </button>
           </div>
 
           <!-- Daftar Kategori Dinamis -->
-          <nav id="sidebarCategoryList" class="space-y-1 text-xs font-bold"></nav>
+          <nav id="sidebarCategoryList" class="space-y-1.5 text-xs font-bold"></nav>
 
           <!-- Kartu Info Kurikulum di Bawah Sidebar -->
-          <div class="mt-5 p-3.5 rounded-2xl bg-white/10 border border-white/15 space-y-2">
+          <div class="mt-5 p-4 rounded-2xl bg-gradient-to-br from-white/12 to-white/5 border border-white/15 space-y-2 backdrop-blur-xs">
             <div class="flex items-center gap-2 text-amber-300 font-extrabold text-xs">
               <i data-lucide="sparkles" class="w-4 h-4"></i>
-              <span>Belajar Sesuai Jenjang</span>
+              <span>Kurikulum Terstruktur</span>
             </div>
-            <p class="text-[11px] text-blue-100 leading-relaxed">
-              Pilih filter jenjang SD, SMP, SMA, atau Umum untuk menampilkan modul PDF, video tutorial, aplikasi, IoT, dan kelas koding AI.
+            <p class="text-[11px] text-blue-100/90 leading-relaxed">
+              Pilih jenjang SD, SMP, SMA, atau Umum untuk menyaring modul PDF, video tutorial, aplikasi, IoT, dan kelas koding AI.
             </p>
           </div>
         </aside>
@@ -447,30 +449,30 @@
         <!-- MAIN CONTENT AREA -->
         <div class="flex-1 min-w-0 w-full space-y-6">
 
-          <!-- HERO BANNER -->
-          <section class="hero-circuit-bg rounded-3xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10">
-              <div class="lg:col-span-7 space-y-3.5">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-[11px] font-extrabold text-sky-200 border border-white/20">
-                  <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+          <!-- HERO BANNER (MODERN EXECUTIVE EDTECH) -->
+          <section class="hero-circuit-bg rounded-3xl p-6 sm:p-8 lg:p-9 text-white shadow-[0_18px_40px_-14px_rgba(15,23,42,0.24)] border border-white/10 relative overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-center relative z-10">
+              <div class="lg:col-span-7 space-y-4">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/12 backdrop-blur-md text-[11px] font-extrabold text-sky-200 border border-white/20 shadow-2xs">
+                  <span class="w-2 h-2 rounded-full bg-sky-300 animate-pulse"></span>
                   <span>Ekosistem Edukasi Informatika, Koding AI &amp; IoT</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight tracking-tight">
-                  Satu Portal, Banyak <span class="text-amber-300">Solusi Digital &amp; Koding AI!</span>
+                <h1 class="text-2xl sm:text-3xl lg:text-[38px] font-extrabold leading-[1.18] tracking-tight">
+                  Satu Portal, Banyak <span class="text-amber-300 underline decoration-amber-300/30 decoration-wavy underline-offset-4">Solusi Digital &amp; Koding AI!</span>
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-xl">
-                  Kumpulan modul belajar PDF terstruktur (SD, SMP, SMA), video tutorial YouTube, aplikasi pendidikan interaktif, proyek Internet of Things (IoT), serta kelas online Vibe Coding (Google Apps Script &amp; Claude AI).
+                <p class="text-xs sm:text-sm text-slate-200/95 leading-relaxed max-w-xl font-medium">
+                  Eksplorasi modul belajar PDF berjenjang (SD, SMP, SMA), video tutorial YouTube terkurasi, aplikasi pendidikan siap pakai, proyek Internet of Things (IoT), serta kelas Vibe Coding (Google Apps Script &amp; Claude AI).
                 </p>
-                <div class="pt-1 flex flex-wrap items-center gap-3">
+                <div class="pt-1.5 flex flex-wrap items-center gap-3">
                   <button type="button"
                           onclick="scrollToCatalog()"
-                          class="px-5 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm inline-flex items-center gap-2 shadow-sm transition">
+                          class="px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm inline-flex items-center gap-2 shadow-md transition-all hover:-translate-y-0.5">
                     <span>Jelajahi Katalog</span>
                     <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
                   </button>
                   <button type="button"
                           onclick="triggerSearchFocus()"
-                          class="px-4 py-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white font-bold text-xs sm:text-sm inline-flex items-center gap-2 border border-white/20 transition">
+                          class="px-4 py-2.5 rounded-2xl bg-white/12 hover:bg-white/20 text-white font-bold text-xs sm:text-sm inline-flex items-center gap-2 border border-white/20 backdrop-blur-xs transition">
                     <i data-lucide="search" class="w-3.5 h-3.5"></i>
                     <span>Cari Topik Materi</span>
                   </button>
@@ -478,70 +480,72 @@
               </div>
 
               <!-- Checklist Keunggulan di Kanan Hero -->
-              <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
-                <div class="flex items-center gap-2.5 bg-white/12 backdrop-blur-xs border border-white/15 rounded-full px-4 py-2 text-xs font-bold">
-                  <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">✓</span>
+              <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2.5">
+                <div class="modern-glass-pill flex items-center gap-3 rounded-2xl px-4 py-2.5 text-xs font-bold">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-500/90 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0 shadow-2xs">✓</span>
                   <span>Modul PDF Informatika &amp; Koding AI (SD - SMA)</span>
                 </div>
-                <div class="flex items-center gap-2.5 bg-white/12 backdrop-blur-xs border border-white/15 rounded-full px-4 py-2 text-xs font-bold">
-                  <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">✓</span>
+                <div class="modern-glass-pill flex items-center gap-3 rounded-2xl px-4 py-2.5 text-xs font-bold">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-500/90 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0 shadow-2xs">✓</span>
                   <span>Video Tutorial YouTube Terintegrasi</span>
                 </div>
-                <div class="flex items-center gap-2.5 bg-white/12 backdrop-blur-xs border border-white/15 rounded-full px-4 py-2 text-xs font-bold">
-                  <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">✓</span>
-                  <span>Aplikasi Pendidikan &amp; Media Ajar Siap Pakai</span>
+                <div class="modern-glass-pill flex items-center gap-3 rounded-2xl px-4 py-2.5 text-xs font-bold">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-500/90 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0 shadow-2xs">✓</span>
+                  <span>Aplikasi Pendidikan &amp; Media Ajar Interaktif</span>
                 </div>
-                <div class="flex items-center gap-2.5 bg-white/12 backdrop-blur-xs border border-white/15 rounded-full px-4 py-2 text-xs font-bold">
-                  <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">✓</span>
+                <div class="modern-glass-pill flex items-center gap-3 rounded-2xl px-4 py-2.5 text-xs font-bold">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-500/90 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0 shadow-2xs">✓</span>
                   <span>Proyek Internet of Things (IoT) &amp; Robotika</span>
                 </div>
-                <div class="flex items-center gap-2.5 bg-white/12 backdrop-blur-xs border border-white/15 rounded-full px-4 py-2 text-xs font-bold">
-                  <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">✓</span>
+                <div class="modern-glass-pill flex items-center gap-3 rounded-2xl px-4 py-2.5 text-xs font-bold">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-500/90 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0 shadow-2xs">✓</span>
                   <span>Kelas Vibe Coding: Google Apps Script &amp; Claude</span>
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- BAR KONTROL KATALOG, INFO DATABASE, & FILTER JENJANG -->
+          <!-- BAR KONTROL KATALOG, INFO DATABASE, & FILTER JENJANG (SEGMENTED MODERN) -->
           <section id="catalogSection" class="space-y-4">
-            <div class="blok-shape-box rounded-2xl border p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+            <div class="blok-shape-box rounded-3xl border p-4 sm:p-5 shadow-[0_6px_24px_-6px_rgba(15,23,42,0.04)] flex flex-wrap items-center justify-between gap-3.5">
               <div class="flex flex-wrap items-center gap-2.5">
                 <!-- Tombol Tampilkan/Sembunyikan Panel Kategori -->
                 <button type="button"
                         id="showSidebarBtn"
                         onclick="toggleSidebarNavigation()"
-                        class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold inline-flex items-center gap-1.5 transition">
+                        class="px-3.5 py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 text-slate-700 text-xs font-extrabold inline-flex items-center gap-1.5 border border-slate-200/70 transition">
                   <i data-lucide="panel-left" class="w-3.5 h-3.5"></i>
                   <span id="sidebarToggleBtnLabel">Sembunyikan Kategori</span>
                 </button>
 
-                <div class="border-l-4 blok-border-primary pl-2.5">
-                  <h2 class="text-base sm:text-lg font-extrabold shape-title leading-none">Katalog Materi &amp; Produk</h2>
+                <div class="border-l-4 blok-border-primary pl-3">
+                  <h2 class="text-base sm:text-lg font-extrabold shape-title leading-none tracking-tight">Katalog Materi &amp; Produk</h2>
                 </div>
 
-                <span id="catalogCountBadge" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-extrabold">
+                <span id="catalogCountBadge" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-extrabold border border-slate-200/70">
                   0 Item
                 </span>
 
                 <!-- Lencana Info Database yang Terlihat di Katalog -->
-                <span id="catalogDbInfoBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-extrabold">
+                <span id="catalogDbInfoBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/90 border border-blue-200/80 text-blue-800 text-[11px] font-extrabold">
                   <i data-lucide="database" class="w-3 h-3"></i>
                   <span id="catalogDbInfoText">DB: Supabase (PostgreSQL)</span>
                 </span>
               </div>
 
-              <!-- Filter Jenjang (Semua, SD, SMP, SMA, Umum) & Tipe -->
-              <div class="flex flex-wrap items-center gap-1.5">
-                <button type="button" data-level="Semua" onclick="selectLevelFilter('Semua')" class="level-pill px-3.5 py-1 rounded-full text-xs font-bold blok-bg-primary text-white shadow-2xs transition">Semua</button>
-                <button type="button" data-level="SD" onclick="selectLevelFilter('SD')" class="level-pill px-3.5 py-1 rounded-full text-xs font-bold bg-white border border-blue-200 text-slate-700 hover:bg-blue-50 transition">SD</button>
-                <button type="button" data-level="SMP" onclick="selectLevelFilter('SMP')" class="level-pill px-3.5 py-1 rounded-full text-xs font-bold bg-white border border-blue-200 text-slate-700 hover:bg-blue-50 transition">SMP</button>
-                <button type="button" data-level="SMA" onclick="selectLevelFilter('SMA')" class="level-pill px-3.5 py-1 rounded-full text-xs font-bold bg-white border border-blue-200 text-slate-700 hover:bg-blue-50 transition">SMA</button>
-                <button type="button" data-level="Umum" onclick="selectLevelFilter('Umum')" class="level-pill px-3.5 py-1 rounded-full text-xs font-bold bg-white border border-blue-200 text-slate-700 hover:bg-blue-50 transition">Umum / Guru</button>
+              <!-- Filter Jenjang (Segmented Pill Bar) & Tipe -->
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="inline-flex flex-wrap items-center gap-1 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/70">
+                  <button type="button" data-level="Semua" onclick="selectLevelFilter('Semua')" class="level-pill px-3.5 py-1.5 rounded-xl text-xs font-extrabold blok-bg-primary text-white shadow-2xs transition">Semua</button>
+                  <button type="button" data-level="SD" onclick="selectLevelFilter('SD')" class="level-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">SD</button>
+                  <button type="button" data-level="SMP" onclick="selectLevelFilter('SMP')" class="level-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">SMP</button>
+                  <button type="button" data-level="SMA" onclick="selectLevelFilter('SMA')" class="level-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">SMA</button>
+                  <button type="button" data-level="Umum" onclick="selectLevelFilter('Umum')" class="level-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">Umum / Guru</button>
+                </div>
 
                 <select id="typeQuickSelect"
                         onchange="handleTypeSelect(this.value)"
-                        class="ml-1 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 focus:outline-none">
+                        class="px-3.5 py-2 rounded-2xl text-xs font-extrabold bg-slate-100/90 border border-slate-200/80 text-slate-700 focus:outline-none focus:border-blue-500">
                   <option value="all">Semua Akses</option>
                   <option value="free">Materi Gratis</option>
                   <option value="paid">Produk / Kelas Dijual</option>
@@ -847,17 +851,21 @@
           </div>
           <div class="flex items-center justify-between pt-2">
             <button type="button" onclick="toggleSecPasswordVisibility()" class="text-blue-600 font-bold hover:underline">Tampilkan / Sembunyikan Password</button>
-            <button type="submit" class="px-5 py-2.5 rounded-xl blok-bg-primary text-white font-extrabold">Simpan User &amp; Password</button>
+            <button type="submit" class="px-5 py-2.5 rounded-xl blok-bg-primary text-white font-extrabold shadow-2xs">Simpan Kredensial Baru</button>
           </div>
         </form>
       </div>
 
-      <!-- TAB 6: KONEKSI DATABASE SUPABASE TERENKRIPSI & INFO ENGINE DB -->
-      <div id="adminSubTabSupabase" class="hidden blok-shape-box rounded-3xl border p-5 shadow-2xs space-y-5">
+      <!-- TAB 6: STATUS KONEKSI DATABASE DARI KODING (DISAMARKAN DI INDEX.HTML) -->
+      <div id="adminSubTabSupabase" class="hidden blok-shape-box rounded-3xl border p-6 shadow-2xs space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
-            <h3 class="text-base font-extrabold shape-title">Brankas Koneksi Database Supabase (Terenkripsi &amp; Realtime)</h3>
-            <p class="text-xs shape-muted">Masukkan Project URL dan Anon Public Key Supabase Anda untuk mengenkripsi kredensial ke dalam `index.html`.</p>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-extrabold mb-1.5">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span>Konfigurasi Tertanam di Koding (index.html)</span>
+            </div>
+            <h3 class="text-base font-extrabold shape-title">Status Koneksi Supabase (Disamarkan di Dalam Koding)</h3>
+            <p class="text-xs shape-muted">Kredensial database diatur langsung pada blok <code>SUPABASE_KODING_DISAMARKAN</code> di dalam koding <code>index.html</code> (tidak ditempel manual di form Admin).</p>
           </div>
           <div class="flex items-center gap-2">
             <label class="text-xs font-bold text-slate-600">Label Info Database di Katalog:</label>
@@ -870,31 +878,39 @@
           </div>
         </div>
 
+        <!-- Status Read-Only Kredensial yang Ada di Koding -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Supabase Project URL (Disamarkan)</label>
-            <input id="sbUrlInput" type="password" autocomplete="off" placeholder="https://xyzcompany.supabase.co" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-800" />
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-slate-700">Supabase Project URL (Disamarkan di Koding)</span>
+              <span id="codeUrlStatusBadge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-700">Mengecek...</span>
+            </div>
+            <p id="codeUrlMaskedPreview" class="font-mono text-xs text-slate-600 bg-white px-3 py-2 rounded-xl border border-slate-200/70 select-none">https://••••••••••••.supabase.co</p>
           </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Supabase Anon Public Key (Disamarkan)</label>
-            <input id="sbKeyInput" type="password" autocomplete="off" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-800" />
+
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-slate-700">Supabase Anon Public Key (Disamarkan di Koding)</span>
+              <span id="codeKeyStatusBadge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-700">Mengecek...</span>
+            </div>
+            <p id="codeKeyMaskedPreview" class="font-mono text-xs text-slate-600 bg-white px-3 py-2 rounded-xl border border-slate-200/70 select-none">eyJhbGciOiJIUzI1NiIs••••••••••••••••••••••••</p>
           </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2.5">
-          <button type="button" onclick="saveAndConnectSupabase()" class="px-5 py-2.5 rounded-xl blok-bg-primary text-white text-xs font-extrabold inline-flex items-center gap-2 shadow-2xs">
-            <i data-lucide="lock" class="w-4 h-4"></i>
-            <span>Enkripsi &amp; Hubungkan Sekarang</span>
-          </button>
-          <button type="button" onclick="copyEncryptedVaultSnippet()" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold inline-flex items-center gap-2">
-            <i data-lucide="copy" class="w-4 h-4"></i>
-            <span>Salin 1 Baris Kode Vault Terenkripsi (Untuk index.html Blogger)</span>
-          </button>
-        </div>
-
-        <div id="generatedVaultCodeBox" class="hidden p-4 rounded-2xl bg-slate-900 text-sky-300 font-mono text-xs space-y-2 overflow-x-auto">
-          <p class="text-[11px] text-slate-300 font-sans font-bold">Tempelkan baris terenkripsi ini ke variabel <code>_BK3_MASTER_EMBEDDED_VAULT</code> di bagian atas script <code>index.html</code> agar otomatis aktif di Incognito &amp; semua perangkat:</p>
-          <code id="generatedVaultCodeText" class="block break-all select-all"></code>
+        <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 text-xs text-blue-950 space-y-2">
+          <p class="font-extrabold flex items-center gap-2">
+            <i data-lucide="code-2" class="w-4 h-4 text-blue-700"></i>
+            <span>Lokasi Pengaturan di Dalam Koding (<code>index.html</code>):</span>
+          </p>
+          <p class="text-[11px] text-blue-900 leading-relaxed">
+            Buka kode <code>index.html</code> pada bagian awal <code>&lt;script&gt;</code> di variabel <code>SUPABASE_PROJECT_URL_DISAMARKAN</code> dan <code>SUPABASE_ANON_PUBLIC_KEY_DISAMARKAN</code>. Anda dapat mengisi URL &amp; Anon Key secara terpecah (split array) maupun kode Base64 agar tersamar di dalam koding dan langsung aktif di semua perangkat maupun mode Incognito.
+          </p>
+          <div class="pt-1">
+            <button type="button" onclick="refreshPortalDataFromDatabase(false)" class="px-4 py-2 rounded-xl blok-bg-primary text-white text-xs font-extrabold inline-flex items-center gap-1.5 shadow-2xs">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Tes &amp; Sinkronkan Ulang Koneksi Koding</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1235,11 +1251,30 @@
   <script type='text/javascript'>
   //<![CDATA[
     // =========================================================================
-    // 0. KREDENSIAL KONEKSI DATABASE SUPABASE UTAMA (DIAMANKAN & REALTIME)
+    // 0. KONFIGURASI SUPABASE DI DALAM KODING (DISAMARKAN / OBFUSCATED)
     // =========================================================================
-    // Masukkan Project URL dan Anon Public Key resmi dari dashboard Supabase Anda di sini:
-    const SUPABASE_URL = '';      // Contoh: 'https://xyzcompany.supabase.co'
-    const SUPABASE_ANON_KEY = ''; // Contoh: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    // Kredensial database ditanam langsung di dalam koding ini (bukan ditempel di Admin).
+    // Cara mengisi:
+    // - Isi bagian tengah array di bawah ini (atau ganti dengan URL / Anon Key Anda),
+    //   atau isi dalam format Base64. Sistem otomatis menyatukan & menyamarkannya di memori.
+
+    // 1. Supabase Project URL (Disamarkan di dalam koding):
+    const SUPABASE_PROJECT_URL_DISAMARKAN = [
+      'https://',
+      '', // <-- Isi ID proyek Supabase Anda di sini (contoh: 'abcdefghijklm') atau URL lengkap
+      '.supabase.co'
+    ];
+
+    // 2. Supabase Anon Public Key (Disamarkan di dalam koding):
+    const SUPABASE_ANON_PUBLIC_KEY_DISAMARKAN = [
+      '', // <-- Bagian 1 Anon Key (contoh: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.')
+      '', // <-- Bagian 2 Anon Key (atau tempelkan seluruh Anon Public Key Anda di sini)
+      ''  // <-- Bagian 3 Anon Key (opsional)
+    ];
+
+    // Opsional: Jika ingin menempelkan dalam bentuk string tunggal atau Base64 di koding:
+    const SUPABASE_URL = 'https://eruxyvrnjjvyzjhnhpkp.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_h698oZ6stynKa0wiAIg9BA_JmD5HuXD';
 
     const _BK3_MASTER_EMBEDDED_VAULT = '';
     const _BK3_CIPHER_SALT = 'bk3#99!xSecure_Realtime_Vault_2026';
@@ -1307,7 +1342,7 @@
         if (!cipherBlob || typeof cipherBlob !== 'string' || !cipherBlob.startsWith('BK3V3.') && !cipherBlob.startsWith('BK3V2.')) {
           return null;
         }
-        const prefixLen = cipherBlob.startsWith('BK3V3.') ? 6 : 6;
+        const prefixLen = 6;
         const hex = atob(cipherBlob.slice(prefixLen));
         let xored = '';
         for (let i = 0; i < hex.length; i += 2) {
@@ -1322,14 +1357,49 @@
       return null;
     }
 
+    function _decodeMaskedCodeValue(val, isUrl) {
+      if (!val) return '';
+      let joined = '';
+      if (Array.isArray(val)) {
+        // Jika bagian tengah array kosong pada template URL, anggap belum diisi
+        if (isUrl && val.length === 3 && val[0] === 'https://' && val[2] === '.supabase.co' && !String(val[1] || '').trim()) {
+          return '';
+        }
+        joined = val.join('').trim();
+      } else {
+        joined = String(val || '').trim();
+      }
+      if (!joined) return '';
+
+      // Jika diisi URL penuh di dalam elemen array tengah (misal 'https://xyz.supabase.co')
+      if (isUrl && joined.includes('https://https://')) {
+        joined = joined.replace('https://https://', 'https://').replace('.supabase.co.supabase.co', '.supabase.co');
+      }
+
+      // Deteksi otomatis jika string disamarkan dengan Base64
+      if (!joined.startsWith('http') && !joined.startsWith('eyJ') && /^[A-Za-z0-9+/=]+$/.test(joined) && joined.length > 16) {
+        try {
+          const decoded = atob(joined).trim();
+          if (decoded.startsWith('http') || decoded.startsWith('eyJ')) {
+            return decoded.replace(/\/+$/, '');
+          }
+        } catch (e) {}
+      }
+      return joined.replace(/\/+$/, '');
+    }
+
     function loadInitialVaultCredentials() {
       if (_BK3_MASTER_EMBEDDED_VAULT && _BK3_MASTER_EMBEDDED_VAULT.trim()) {
         const dec = decryptVaultPayload(_BK3_MASTER_EMBEDDED_VAULT.trim());
         if (dec) return dec;
       }
-      if (SUPABASE_URL && SUPABASE_URL.trim() && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.trim()) {
-        return { url: SUPABASE_URL.trim().replace(/\/+$/, ''), anonKey: SUPABASE_ANON_KEY.trim() };
+
+      const maskedUrl = _decodeMaskedCodeValue(SUPABASE_PROJECT_URL_DISAMARKAN, true) || _decodeMaskedCodeValue(SUPABASE_URL, true);
+      const maskedKey = _decodeMaskedCodeValue(SUPABASE_ANON_PUBLIC_KEY_DISAMARKAN, false) || _decodeMaskedCodeValue(SUPABASE_ANON_KEY, false);
+      if (maskedUrl && maskedKey) {
+        return { url: maskedUrl, anonKey: maskedKey };
       }
+
       const stored = safeStorage.getItem(_BK3_STORAGE_KEY);
       if (stored) {
         const dec = decryptVaultPayload(stored);
@@ -2796,8 +2866,8 @@
         grid.innerHTML = '';
         emptyState.classList.remove('hidden');
         if (!appState.supabaseUrl || !appState.supabaseKey) {
-          if (emptyTitle) emptyTitle.textContent = 'Koneksi Database Supabase Belum Ditanamkan di Kode HTML Blogger';
-          if (emptySub) emptySub.textContent = 'Agar produk tampil di Private Tab / Incognito & semua pengunjung, salin 1 Baris Kode Vault dari Panel Admin lalu tempel ke Edit HTML Tema Blogger.';
+          if (emptyTitle) emptyTitle.textContent = 'Konfigurasi Supabase di Koding Belum Diisi';
+          if (emptySub) emptySub.textContent = 'Silakan isi SUPABASE_PROJECT_URL_DISAMARKAN dan SUPABASE_ANON_PUBLIC_KEY_DISAMARKAN di bagian atas script index.html.';
         } else {
           if (emptyTitle) emptyTitle.textContent = 'Belum ada materi atau produk yang sesuai filter';
           if (emptySub) emptySub.textContent = 'Silakan tambahkan materi/produk melalui Panel Admin atau ubah filter pencarian.';
@@ -2826,21 +2896,21 @@
           actionLabel = 'Baca PDF';
         }
 
-        return '<article class="product-card blok-shape-box rounded-2xl border p-3.5 sm:p-4 flex gap-3.5 items-start shadow-2xs overflow-hidden">' +
-          '<div onclick="openDetailModal(\'' + escapeHtml(p.id) + '\')" class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 self-start rounded-xl bg-gradient-to-br ' + coverGradient + ' p-2 text-white flex flex-col justify-between relative overflow-hidden cursor-pointer group shadow-2xs">' +
+        return '<article class="product-card blok-shape-box rounded-3xl border p-4 sm:p-4.5 flex gap-4 items-start overflow-hidden">' +
+          '<div onclick="openDetailModal(\'' + escapeHtml(p.id) + '\')" class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 self-start rounded-2xl bg-gradient-to-br ' + coverGradient + ' p-2.5 text-white flex flex-col justify-between relative overflow-hidden cursor-pointer group shadow-sm ring-1 ring-black/5">' +
             (safeImg
               ? '<img src="' + escapeHtml(safeImg) + '" alt="' + escapeHtml(p.title) + '" class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-300" />' +
                 '<div class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-900/15 to-transparent"></div>'
               : '') +
-            '<span class="relative z-10 self-start max-w-full truncate px-1.5 py-0.5 rounded-md bg-slate-950/65 backdrop-blur-xs text-[9px] font-extrabold tracking-wide">' +
+            '<span class="relative z-10 self-start max-w-full truncate px-2 py-0.5 rounded-lg bg-slate-950/65 backdrop-blur-xs text-[9px] font-extrabold tracking-wide">' +
               escapeHtml(p.category) +
             '</span>' +
             '<div class="relative z-10 my-auto py-1 text-center flex items-center justify-center">' +
               (safeImg
                 ? ''
                 : (hasVideo
-                    ? getCategoryIconMarkup('Video Tutorial', 'YouTube', 'youtube', 'w-7 h-7 mx-auto text-white/90 drop-shadow')
-                    : '<i data-lucide="' + (hasPdf ? 'file-text' : 'cpu') + '" class="w-7 h-7 mx-auto text-white/90 drop-shadow"></i>')) +
+                    ? getCategoryIconMarkup('Video Tutorial', 'YouTube', 'youtube', 'w-7 h-7 mx-auto text-white/95 drop-shadow')
+                    : '<i data-lucide="' + (hasPdf ? 'file-text' : 'cpu') + '" class="w-7 h-7 mx-auto text-white/95 drop-shadow"></i>')) +
             '</div>' +
             '<span class="relative z-10 text-[9px] font-bold text-white/95 truncate">' + escapeHtml(levelsText) + '</span>' +
           '</div>' +
@@ -2849,17 +2919,17 @@
             '<div>' +
               '<div class="flex items-center justify-between gap-1.5 mb-1">' +
                 '<span class="text-[11px] font-bold shape-muted truncate">' + escapeHtml(p.category) + ' • ' + escapeHtml(levelsText) + '</span>' +
-                '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 ' + (paid ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700') + '">' +
+                '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 ' + (paid ? 'bg-rose-50 text-rose-700 border border-rose-200/70' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/70') + '">' +
                   (paid ? 'Dijual' : 'Gratis') +
                 '</span>' +
               '</div>' +
-              '<h3 onclick="openDetailModal(\'' + escapeHtml(p.id) + '\')" class="font-extrabold text-sm sm:text-base shape-title line-clamp-2 cursor-pointer hover:underline leading-snug break-words">' +
+              '<h3 onclick="openDetailModal(\'' + escapeHtml(p.id) + '\')" class="font-extrabold text-sm sm:text-[15px] shape-title line-clamp-2 cursor-pointer hover:text-blue-600 transition-colors leading-snug break-words">' +
                 escapeHtml(p.title) +
               '</h3>' +
               '<p class="text-[11px] shape-muted line-clamp-2 mt-1 leading-relaxed break-words">' + escapeHtml(plainPreview) + '</p>' +
             '</div>' +
 
-            '<div class="pt-2.5 mt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-x-2 gap-y-2">' +
+            '<div class="pt-3 mt-2.5 border-t border-slate-100/90 flex flex-wrap items-center justify-between gap-x-2 gap-y-2">' +
               '<div class="min-w-0">' +
                 '<div class="flex items-center gap-1 text-[11px] font-bold text-amber-500">' +
                   '<span>★ ' + Number(p.rating || 4.9).toFixed(1) + '</span>' +
@@ -2871,10 +2941,10 @@
               '</div>' +
 
               '<div class="flex items-center gap-1.5 shrink-0 ml-auto">' +
-                '<button onclick="openDetailModal(\'' + escapeHtml(p.id) + '\')" class="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition shrink-0" title="Lihat Detail / Video / PDF">' +
+                '<button onclick="openDetailModal(\'' + escapeHtml(p.id) + '\')" class="p-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 text-slate-700 transition shrink-0" title="Lihat Detail / Video / PDF">' +
                   '<i data-lucide="eye" class="w-4 h-4"></i>' +
                 '</button>' +
-                '<button onclick="' + (paid ? 'handleDirectCheckout(\'' + escapeHtml(p.id) + '\')' : 'openDetailModal(\'' + escapeHtml(p.id) + '\')') + '" class="px-3 py-1.5 sm:py-2 rounded-xl blok-bg-primary text-white text-[11px] sm:text-xs font-extrabold shadow-2xs transition inline-flex items-center justify-center whitespace-nowrap">' +
+                '<button onclick="' + (paid ? 'handleDirectCheckout(\'' + escapeHtml(p.id) + '\')' : 'openDetailModal(\'' + escapeHtml(p.id) + '\')') + '" class="px-3.5 py-2 rounded-xl blok-bg-primary text-white text-[11px] sm:text-xs font-extrabold shadow-2xs transition inline-flex items-center justify-center whitespace-nowrap">' +
                   '<span>' + actionLabel + '</span>' +
                 '</button>' +
               '</div>' +
@@ -2913,8 +2983,8 @@
       document.querySelectorAll('.level-pill').forEach(function (btn) {
         const isMatch = btn.getAttribute('data-level') === level;
         btn.className = isMatch
-          ? 'level-pill px-3.5 py-1 rounded-full text-xs font-bold blok-bg-primary text-white shadow-2xs transition'
-          : 'level-pill px-3.5 py-1 rounded-full text-xs font-bold bg-white border border-blue-200 text-slate-700 hover:bg-blue-50 transition';
+          ? 'level-pill px-3.5 py-1.5 rounded-xl text-xs font-extrabold blok-bg-primary text-white shadow-2xs transition'
+          : 'level-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white/70 transition';
       });
       renderProductsCatalog();
       lucide.createIcons();
@@ -4004,68 +4074,49 @@
     }
 
     function updateGeneratedVaultBoxUI() {
-      const box = document.getElementById('generatedVaultCodeBox');
-      const codeEl = document.getElementById('generatedVaultCodeText');
-      if (!box || !codeEl) return;
-      if (appState.supabaseUrl && appState.supabaseKey) {
-        const cipherStr = encryptVaultPayload(appState.supabaseUrl, appState.supabaseKey);
-        codeEl.textContent = "const _BK3_MASTER_EMBEDDED_VAULT = '" + cipherStr + "';";
-        box.classList.remove('hidden');
+      const urlBadge = document.getElementById('codeUrlStatusBadge');
+      const keyBadge = document.getElementById('codeKeyStatusBadge');
+      const urlPreview = document.getElementById('codeUrlMaskedPreview');
+      const keyPreview = document.getElementById('codeKeyMaskedPreview');
+
+      const hasUrl = Boolean(appState.supabaseUrl && appState.supabaseUrl.length > 10);
+      const hasKey = Boolean(appState.supabaseKey && appState.supabaseKey.length > 20);
+
+      if (urlBadge) {
+        urlBadge.textContent = hasUrl ? 'Aktif di Koding' : 'Belum Diisi di Koding';
+        urlBadge.className = hasUrl
+          ? 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800'
+          : 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800';
       }
-    }
-
-    async function saveAndConnectSupabase() {
-      if (!appState.isAdminAuthenticated) return;
-      const urlInputEl = document.getElementById('sbUrlInput');
-      const keyInputEl = document.getElementById('sbKeyInput');
-      const url = urlInputEl.value.trim().replace(/\/+$/, '');
-      const key = keyInputEl.value.trim();
-
-      if (!url || !key) {
-        showToast('Masukkan Project URL dan Anon Key Supabase untuk dienkripsi.', 'error');
-        return;
+      if (keyBadge) {
+        keyBadge.textContent = hasKey ? 'Aktif di Koding' : 'Belum Diisi di Koding';
+        keyBadge.className = hasKey
+          ? 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800'
+          : 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800';
       }
 
-      const encryptedBlob = encryptVaultPayload(url, key);
-      safeStorage.setItem(_BK3_STORAGE_KEY, encryptedBlob);
-
-      appState.supabaseUrl = url;
-      appState.supabaseKey = key;
-
-      urlInputEl.value = '';
-      keyInputEl.value = '';
-      urlInputEl.placeholder = '•••••••••• (Terenkripsi & Terkunci)';
-      keyInputEl.placeholder = '•••••••••••••••• (Terenkripsi & Terkunci)';
-
-      updateGeneratedVaultBoxUI();
-      await connectSupabaseClient(false);
-    }
-
-    function copyEncryptedVaultSnippet() {
-      if (!appState.isAdminAuthenticated) return;
-      if (!appState.supabaseUrl || !appState.supabaseKey) {
-        showToast('Hubungkan Supabase terlebih dahulu sebelum menyalin kode vault terenkripsi.', 'error');
-        return;
+      if (urlPreview) {
+        if (hasUrl) {
+          const u = appState.supabaseUrl;
+          urlPreview.textContent = u.substring(0, 11) + '••••••••••••' + u.substring(u.length - 12);
+        } else {
+          urlPreview.textContent = 'https://[ISI_DI_KODING].supabase.co';
+        }
       }
-      const cipherStr = encryptVaultPayload(appState.supabaseUrl, appState.supabaseKey);
-      const snippet = "const _BK3_MASTER_EMBEDDED_VAULT = '" + cipherStr + "';";
-      updateGeneratedVaultBoxUI();
-      const ta = document.createElement('textarea');
-      ta.value = snippet;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToast('1 Baris Kode Vault berhasil disalin! Tempelkan ke Edit HTML Tema Blogger agar aktif di Incognito.', 'success');
-    }
-
-    function copyFullHtmlWithEmbeddedVault() {
-      copyEncryptedVaultSnippet();
+      if (keyPreview) {
+        if (hasKey) {
+          const k = appState.supabaseKey;
+          keyPreview.textContent = k.substring(0, 14) + '••••••••••••••••••••••••' + k.substring(k.length - 6);
+        } else {
+          keyPreview.textContent = 'eyJhbGciOiJIUzI1NiIs•••••••••••••••• (Isi di Koding)';
+        }
+      }
     }
 
     async function refreshPortalDataFromDatabase(silent) {
+      updateGeneratedVaultBoxUI();
       if (!appState.supabaseUrl || !appState.supabaseKey) {
-        if (!silent) showToast('Database belum dikonfigurasi.', 'error');
+        if (!silent) showToast('Silakan isi SUPABASE_PROJECT_URL_DISAMARKAN dan SUPABASE_ANON_PUBLIC_KEY_DISAMARKAN di dalam koding index.html.', 'error');
         return;
       }
       await connectSupabaseClient(silent);
@@ -4289,6 +4340,7 @@
       applyCustomShapeColor(appState.customShapeColor || '#FFFFFF', false);
       toggleSidebarNavigation(appState.sidebarVisible);
       updateCatalogDatabaseBadge();
+      updateGeneratedVaultBoxUI();
 
       renderSidebarCategories();
       renderProductsCatalog();
