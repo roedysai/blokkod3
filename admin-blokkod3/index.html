@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Admin Command Center — blokkod3</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Supabase JS SDK v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      -webkit-tap-highlight-color: transparent;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .brand-btn-primary {
+      background: linear-gradient(135deg, #00f5d4 0%, #06b6d4 100%);
+      color: #090d16;
+    }
+    .brand-btn-primary:hover {
+      background: linear-gradient(135deg, #00dfbe 0%, #0891b2 100%);
+      box-shadow: 0 4px 16px rgba(6, 182, 212, 0.25);
+    }
+    .admin-bg-grid {
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.06) 0px, transparent 50%),
+        linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    }
+    .admin-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    }
+    .admin-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .rich-editor-content:empty:before {
+      content: attr(data-placeholder);
+      color: #94a3b8;
+      pointer-events: none;
+    }
+    .rich-editor-content ul {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    .rich-editor-content ol {
+      list-style-type: decimal;
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    .rich-editor-content p, .rich-editor-content div {
+      margin-bottom: 0.35rem;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .safe-pb { padding-bottom: max(0.65rem, env(safe-area-inset-bottom)); }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-cyan-200 selection:text-slate-950 overflow-x-hidden">
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+  <!-- ========================================================================= -->
+  <!-- ================ HALAMAN LOGIN ADMINISTRATOR (GATEWAY) ================== -->
+  <!-- ========================================================================= -->
+  <div id="admin-login-screen" class="min-h-screen admin-bg-grid flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+      <div class="px-6 py-6 bg-slate-50/90 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <!-- Logo Resmi blokkod3 -->
+          <div class="w-11 h-11 rounded-full shadow-md flex items-center justify-center shrink-0 overflow-hidden">
+            <svg viewBox="0 0 200 200" class="w-full h-full rounded-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="blokkod3-admin-grad" x1="15%" y1="50%" x2="85%" y2="50%">
+                  <stop offset="0%" stop-color="#00F5D4" />
+                  <stop offset="48%" stop-color="#7CE8E6" />
+                  <stop offset="100%" stop-color="#FF1E7A" />
+                </linearGradient>
+              </defs>
+              <circle cx="100" cy="100" r="98" fill="#0B1111" />
+              <text x="100" y="92" text-anchor="middle" fill="url(#blokkod3-admin-grad)" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">blok</text>
+              <text x="100" y="142" text-anchor="middle" fill="url(#blokkod3-admin-grad)" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">kod3</text>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <h1 class="font-heading text-base font-extrabold text-slate-900">Admin Command Center</h1>
+              <span class="px-1.5 py-0.5 text-[9px] font-extrabold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded">SECURE</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Autentikasi Supabase Auth Terlindungi RLS</p>
+          </div>
+        </div>
+        <a href="../index.html" title="Kembali ke Katalog Publik" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900 transition">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <form onsubmit="submitAdminLogin(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Administrator</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input type="email" id="admin-email-input" required autocomplete="email" placeholder="admin@blokkod3.id" class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input type="password" id="admin-password-input" required autocomplete="current-password" placeholder="Masukkan password Supabase Auth" class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            <button type="button" onclick="togglePasswordVisibility('admin-password-input')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-admin-login-submit" class="w-full py-3 brand-btn-primary text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <span>Masuk ke Dashboard Admin</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+          <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i> Proteksi Brute-Force & RLS</span>
+          <a href="../index.html" class="text-cyan-700 font-semibold hover:underline">&larr; Lihat Katalog</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ================ PANEL ADMIN (BRIGHT WHITE SAAS COMMAND CENTER) ========= -->
+  <!-- ========================================================================= -->
+  <div id="admin-panel-wrapper" class="hidden min-h-screen admin-bg-grid text-slate-800 flex flex-col lg:flex-row relative pb-20 lg:pb-0">
+    
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="admin-sidebar-backdrop" onclick="toggleAdminMobileSidebar(false)" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 lg:hidden"></div>
+
+    <!-- SIDEBAR NAVIGASI ADMIN -->
+    <aside id="admin-sidebar" class="fixed lg:sticky top-0 left-0 z-50 h-screen w-72 bg-white/95 backdrop-blur-xl border-r border-slate-200 flex flex-col justify-between shrink-0 -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-sm lg:shadow-none">
+      <div class="p-5 space-y-6 overflow-y-auto">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
+              <svg viewBox="0 0 200 200" class="w-full h-full rounded-full" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="98" fill="#0B1111" />
+                <text x="100" y="92" text-anchor="middle" fill="#00F5D4" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">blok</text>
+                <text x="100" y="142" text-anchor="middle" fill="#FF1E7A" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">kod3</text>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h4 class="font-heading text-sm font-extrabold text-slate-900 tracking-tight">blokkod3</h4>
+                <span class="px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider bg-cyan-50 text-cyan-700 rounded border border-cyan-200">PRO</span>
+              </div>
+              <p class="text-[11px] text-slate-500">Admin Command Center</p>
+            </div>
+          </div>
+          <button onclick="toggleAdminMobileSidebar(false)" class="lg:hidden p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-900">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <button onclick="openProductModal()" class="w-full py-2.5 px-3.5 brand-btn-primary rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah Produk Baru
+        </button>
+
+        <div class="space-y-1">
+          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Menu Utama</p>
+          
+          <button onclick="switchAdminTab('dashboard')" id="adm-tab-dashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-cyan-50 text-cyan-700 border-l-4 border-cyan-500 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview & Analitik</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+          </button>
+
+          <button onclick="switchAdminTab('products')" id="adm-tab-products" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-xs font-semibold transition">
+            <span class="flex items-center gap-3"><i data-lucide="package" class="w-4 h-4"></i> Produk & Lynk.id</span>
+            <span id="sidebar-prod-badge" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-600 tabular-nums">0</span>
+          </button>
+
+          <button onclick="switchAdminTab('categories')" id="adm-tab-categories" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-xs font-semibold transition">
+            <span class="flex items-center gap-3"><i data-lucide="folders" class="w-4 h-4"></i> Kategori Katalog</span>
+            <span id="sidebar-cat-badge" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-600 tabular-nums">0</span>
+          </button>
+
+          <button onclick="switchAdminTab('settings')" id="adm-tab-settings" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-xs font-semibold transition">
+            <span class="flex items-center gap-3"><i data-lucide="sliders" class="w-4 h-4"></i> Pengaturan & Backup</span>
+          </button>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-500 font-medium">Mode Database</span>
+            <span id="db-status-badge" class="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="database" class="w-3 h-3"></i> Supabase</span>
+          </div>
+          <p id="db-status-desc" class="text-[10px] text-slate-500 leading-relaxed">Terhubung langsung ke tabel PostgreSQL Supabase.</p>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-200 bg-slate-50/70">
+        <div class="flex items-center justify-between px-2 py-1">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-full bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-700 font-bold text-xs shrink-0">
+              <i data-lucide="shield" class="w-4 h-4"></i>
+            </div>
+            <div class="min-w-0">
+              <p id="sidebar-admin-username" class="text-xs font-bold text-slate-900 truncate">admin@blokkod3.id</p>
+              <p class="text-[10px] text-emerald-600 font-medium mt-0.5">Supabase Auth</p>
+            </div>
+          </div>
+          <button onclick="logoutAdmin()" title="Logout Admin" class="p-2 rounded-xl text-rose-600 hover:bg-rose-50 transition shrink-0">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- KONTEN UTAMA ADMIN -->
+    <div class="flex-1 flex flex-col min-w-0">
+      
+      <!-- TOP COMMAND HEADER BAR -->
+      <header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between gap-4 sticky top-0 z-30">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleAdminMobileSidebar(true)" class="lg:hidden p-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900">
+            <i data-lucide="menu" class="w-4 h-4"></i>
+          </button>
+          <div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+              <span>Admin Panel</span>
+              <i data-lucide="chevron-right" class="w-3 h-3"></i>
+              <span id="admin-breadcrumb-current" class="text-cyan-700 font-semibold">Overview & Analitik</span>
+            </div>
+            <h1 id="admin-page-title" class="font-heading text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Executive Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <div class="relative hidden md:block w-60">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="admin-global-search" oninput="handleAdminGlobalSearch(this.value)" placeholder="Cari produk di tabel..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-cyan-500 transition" />
+          </div>
+
+          <button onclick="refreshAllFromBackend()" title="Sinkronisasi Ulang Data" class="p-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-xs font-semibold transition">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          </button>
+
+          <a href="../index.html" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition flex items-center gap-2 shadow-2xs">
+            <i data-lucide="eye" class="w-3.5 h-3.5 text-cyan-600"></i>
+            <span class="hidden sm:inline">Buka Toko Live</span>
+          </a>
+
+          <button onclick="openCategoryModal()" class="hidden sm:flex px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition items-center gap-1.5 shadow-2xs">
+            <i data-lucide="folder-plus" class="w-3.5 h-3.5 text-pink-600"></i>
+            <span>+ Kategori</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- MAIN WORKSPACE CONTAINER -->
+      <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
+
+        <!-- TAB 1: DASHBOARD & ANALYTICS -->
+        <div id="adm-view-dashboard" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Pengunjung Hari Ini</p>
+                  <h3 id="admin-today-viewer-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-cyan-50 border border-cyan-200/70 flex items-center justify-center text-cyan-600">
+                  <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> Live
+                </span>
+                <span id="admin-total-7d-viewers" class="text-slate-500 tabular-nums">Total 7 hr: 0</span>
+              </div>
+            </div>
+
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Klik Checkout Lynk.id</p>
+                  <h3 id="admin-total-clicks-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-cyan-600 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-pink-50 border border-pink-200/70 flex items-center justify-center text-pink-600">
+                  <i data-lucide="mouse-pointer-click" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span id="admin-conversion-rate" class="px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-700 font-bold">CTR: 0%</span>
+                <span class="text-slate-500">Tercatat Real-Time</span>
+              </div>
+            </div>
+
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Produk Digital Aktif</p>
+                  <h3 id="admin-total-prod-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200/70 flex items-center justify-center text-indigo-600">
+                  <i data-lucide="package-check" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span id="admin-featured-prod-count" class="text-indigo-600 font-semibold">0 Produk Unggulan</span>
+                <button onclick="switchAdminTab('products')" class="text-cyan-700 hover:underline font-bold">Kelola &rarr;</button>
+              </div>
+            </div>
+
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Total Kategori</p>
+                  <h3 id="admin-total-cat-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center text-emerald-600">
+                  <i data-lucide="layers" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold">Katalog Aktif</span>
+                <button onclick="switchAdminTab('categories')" class="text-cyan-700 hover:underline font-bold">Lihat &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- GRAFIK INTERAKTIF 7 HARI TERAKHIR -->
+          <div class="admin-card rounded-2xl p-5 sm:p-6 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-heading text-base font-bold text-slate-900">Analitik Trafik & Konversi Lynk.id (7 Hari Terakhir)</h3>
+                  <span class="px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 text-[10px] font-bold border border-cyan-200">Real-time</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">Perbandingan jumlah pengunjung katalog dengan klik tombol pembelian Lynk.id</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 text-[11px] font-semibold">
+                  <button onclick="setChartMode('both')" id="chart-btn-both" class="px-2.5 py-1 rounded-lg bg-white text-cyan-700 font-bold shadow-2xs border border-slate-200 transition">Semua</button>
+                  <button onclick="setChartMode('views')" id="chart-btn-views" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">Views</button>
+                  <button onclick="setChartMode('clicks')" id="chart-btn-clicks" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">Klik Lynk</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="admin-daily-viewers-chart" class="grid grid-cols-7 gap-2 sm:gap-4 items-end h-52 pt-8 pb-2 px-3 sm:px-6 bg-slate-50 rounded-2xl border border-slate-200/80 relative"></div>
+
+            <div class="flex flex-wrap items-center justify-between gap-4 text-xs pt-1">
+              <div class="flex items-center gap-5">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-sm bg-gradient-to-t from-cyan-500 to-[#00f5d4]"></span>
+                  <span class="text-slate-600 font-medium">Pengunjung Katalog (Views)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-sm bg-gradient-to-t from-rose-500 to-[#ff1e7a]"></span>
+                  <span class="text-slate-600 font-medium">Klik Checkout Lynk.id</span>
+                </div>
+              </div>
+              <div id="chart-summary-stats" class="text-slate-500 font-medium tabular-nums">
+                Rata-rata: <strong class="text-slate-900">0 views/hari</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTTOM SPLIT: TOP PRODUCTS & AUDIT LOG -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 admin-card rounded-2xl p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-heading text-sm font-bold text-slate-900">Performa Produk Teratas</h3>
+                  <p class="text-[11px] text-slate-500">Diurutkan berdasarkan konversi klik link Lynk.id tertinggi</p>
+                </div>
+                <button onclick="switchAdminTab('products')" class="text-xs font-bold text-cyan-700 hover:underline">Semua Produk</button>
+              </div>
+              <div id="admin-top-products-list" class="space-y-2.5"></div>
+            </div>
+
+            <div class="lg:col-span-5 admin-card rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Log Aktivitas Sistem</h3>
+                    <p class="text-[11px] text-slate-500">Rekam jejak perubahan katalog di database</p>
+                  </div>
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                </div>
+                <div id="admin-activity-log" class="space-y-2.5 max-h-64 overflow-y-auto pr-1"></div>
+              </div>
+              <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Sinkronisasi: <strong class="text-emerald-600">Aktif</strong></span>
+                <button onclick="clearActivityLog()" class="hover:text-slate-800 underline">Bersihkan Tampilan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: KELOLA PRODUK & LYNK.ID -->
+        <div id="adm-view-products" class="hidden space-y-5">
+          <div class="admin-card rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+              <div class="relative flex-1 max-w-md">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="adm-prod-search" oninput="renderAdminProducts()" placeholder="Cari nama produk, deskripsi, atau link Lynk.id..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-cyan-500" />
+              </div>
+
+              <select id="adm-prod-cat-filter" onchange="renderAdminProducts()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:bg-white focus:border-cyan-500">
+                <option value="all">Semua Kategori</option>
+              </select>
+
+              <select id="adm-prod-badge-filter" onchange="renderAdminProducts()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:bg-white focus:border-cyan-500">
+                <option value="all">Semua Status Badge</option>
+                <option value="Best Seller">Best Seller</option>
+                <option value="Hot">Hot</option>
+                <option value="Populer">Populer</option>
+                <option value="Baru">Baru</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2.5 self-end lg:self-center">
+              <button onclick="openProductModal()" class="px-4 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm flex items-center gap-2 transition">
+                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Produk
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th class="py-3.5 px-4">Produk Digital</th>
+                    <th class="py-3.5 px-4">Kategori & Badge</th>
+                    <th class="py-3.5 px-4">Harga & Promo</th>
+                    <th class="py-3.5 px-4">Link Checkout Lynk.id</th>
+                    <th class="py-3.5 px-4 text-center">Unggulan</th>
+                    <th class="py-3.5 px-4 text-right">Aksi CRUD</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-product-table-body" class="divide-y divide-slate-200/80 text-xs"></tbody>
+              </table>
+            </div>
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+              <span id="admin-product-showing-text">Menampilkan 0 produk</span>
+              <span class="text-[11px]">Tips: Klik ikon <strong class="text-slate-700">Salin</strong> untuk menyalin URL Lynk.id dengan cepat.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: KELOLA KATEGORI -->
+        <div id="adm-view-categories" class="hidden space-y-5">
+          <div class="admin-card rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-heading text-base font-bold text-slate-900">Manajemen Kategori Katalog</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Atur pengelompokan produk, ikon visual, dan tema warna untuk memudahkan navigasi pembeli.</p>
+            </div>
+            <button onclick="openCategoryModal()" class="px-4 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm flex items-center gap-2 self-start sm:self-center transition">
+              <i data-lucide="folder-plus" class="w-4 h-4"></i> + Kategori Baru
+            </button>
+          </div>
+
+          <div id="admin-categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- TAB 4: PENGATURAN TOKO, BACKUP & AKUN SUPABASE AUTH -->
+        <div id="adm-view-settings" class="hidden space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <div class="lg:col-span-7 space-y-6">
+              <div class="admin-card rounded-2xl p-6 space-y-5">
+                <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                  <div class="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 border border-cyan-200/70 flex items-center justify-center">
+                    <i data-lucide="store" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Konfigurasi Katalog Publik & CS</h3>
+                    <p class="text-[11px] text-slate-500">Sesuaikan informasi kontak WhatsApp dan tampilan Hero halaman depan</p>
+                  </div>
+                </div>
+
+                <form onsubmit="submitStoreSettings(event)" class="space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp CS (Format 628...)</label>
+                      <input type="text" id="setting-wa-number" required placeholder="6281234567890" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1.5">Produk Sorotan di Hero Banner</label>
+                      <select id="setting-hero-product" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500"></select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Teks Badge Hero</label>
+                    <input type="text" id="setting-hero-badge" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Deskripsi Singkat Hero</label>
+                    <textarea id="setting-hero-sub" rows="2" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500"></textarea>
+                  </div>
+
+                  <div class="pt-2 flex justify-end">
+                    <button type="submit" id="btn-save-store-settings" class="px-5 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
+                      <i data-lucide="save" class="w-4 h-4"></i> Simpan Konfigurasi Toko
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="admin-card rounded-2xl p-6 space-y-4">
+                <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                  <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200/70 flex items-center justify-center">
+                    <i data-lucide="download-cloud" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Cadangan Data (Export JSON)</h3>
+                    <p class="text-[11px] text-slate-500">Unduh salinan data katalog Supabase ke perangkat Anda.</p>
+                  </div>
+                </div>
+                <button onclick="exportDatabaseJSON()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-800 transition inline-flex items-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4 text-cyan-600"></i> Unduh Backup Katalog (.json)
+                </button>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5">
+              <div class="admin-card rounded-2xl p-6 space-y-5">
+                <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                  <div class="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 border border-pink-200/70 flex items-center justify-center">
+                    <i data-lucide="shield-lock" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Keamanan Akun Supabase Auth</h3>
+                    <p class="text-[11px] text-slate-500">Perbarui password login Administrator Supabase Anda</p>
+                  </div>
+                </div>
+
+                <form onsubmit="submitAdminPasswordUpdate(event)" class="space-y-4">
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Administrator Aktif</label>
+                    <input type="email" id="setting-admin-email" readonly class="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-500 cursor-not-allowed" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Password Baru (Min. 6 Karakter)</label>
+                    <div class="relative">
+                      <input type="password" id="setting-admin-pass" minlength="6" required placeholder="Masukkan password baru" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500 pr-10" />
+                      <button type="button" onclick="togglePasswordVisibility('setting-admin-pass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Konfirmasi Password Baru</label>
+                    <input type="password" id="setting-admin-pass-confirm" minlength="6" required placeholder="Ketik ulang password baru" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+                  </div>
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600 space-y-1">
+                    <p class="font-semibold text-slate-900">Alamat Portal Admin:</p>
+                    <p class="font-mono-code text-[10px] text-cyan-700 break-all" id="admin-portal-url-hint">/admin-blokkod3/</p>
+                  </div>
+                  <button type="submit" class="w-full py-2.5 brand-btn-primary text-xs font-bold rounded-xl shadow-sm transition">
+                    Perbarui Password Supabase
+                  </button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- MOBILE & IPAD BOTTOM NAVIGATION BAR -->
+    <nav aria-label="Navigasi Admin Mobile" class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200 px-2 pt-2 safe-pb shadow-[0_-4px_16px_rgba(15,23,42,0.06)]">
+      <div class="max-w-lg mx-auto grid grid-cols-4 gap-1">
+        <button type="button" onclick="switchAdminTab('dashboard')" id="adm-mob-tab-dashboard" class="flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-xl bg-cyan-50 text-cyan-700 font-bold text-[10px] transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('products')" id="adm-mob-tab-products" class="flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-xl text-slate-500 hover:bg-slate-100 font-semibold text-[10px] transition">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>Produk</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('categories')" id="adm-mob-tab-categories" class="flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-xl text-slate-500 hover:bg-slate-100 font-semibold text-[10px] transition">
+          <i data-lucide="folders" class="w-4 h-4"></i>
+          <span>Kategori</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('settings')" id="adm-mob-tab-settings" class="flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-xl text-slate-500 hover:bg-slate-100 font-semibold text-[10px] transition">
+          <i data-lucide="sliders" class="w-4 h-4"></i>
+          <span>Pengaturan</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- =================== MODAL DIALOGS (CRUD & CONFIRM) ====================== -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. MODAL: TAMBAH / EDIT PRODUK -->
+  <div id="admin-product-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 text-slate-800 w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-700 flex items-center justify-center">
+            <i data-lucide="package-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 id="product-modal-title" class="font-heading text-sm sm:text-base font-bold text-slate-900">Tambah Produk Digital Baru</h3>
+            <p class="text-[11px] text-slate-500">Upload cover gambar, deskripsi berformat, &amp; Live Card Preview</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeModal('admin-product-modal')" class="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <form onsubmit="submitProductForm(event)" class="p-5 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <input type="hidden" id="prod-form-id" value="" />
+
+        <div class="lg:col-span-7 space-y-3.5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Produk</label>
+              <select id="upload-cat" oninput="updateProductLivePreview()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500"></select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Label Badge Promo</label>
+              <select id="upload-badge" oninput="updateProductLivePreview()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500">
+                <option value="Best Seller">Best Seller</option>
+                <option value="Hot">Hot</option>
+                <option value="Populer">Populer</option>
+                <option value="Baru">Baru</option>
+                <option value="Limited">Limited</option>
+                <option value="">Tanpa Badge</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama / Judul Produk Digital</label>
+            <input type="text" id="upload-title" required oninput="updateProductLivePreview()" placeholder="Contoh: Full-Stack Next.js AI SaaS Boilerplate" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Harga Jual (Aktif)</label>
+              <input type="text" id="upload-price" required oninput="updateProductLivePreview()" value="Rp 79.000" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Harga Coret (Normal)</label>
+              <input type="text" id="upload-orig-price" oninput="updateProductLivePreview()" value="Rp 159.000" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Rating Bintang</label>
+              <input type="text" id="upload-rating" oninput="updateProductLivePreview()" value="4.9" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Label Ulasan / Terjual</label>
+              <input type="text" id="upload-reviews" oninput="updateProductLivePreview()" value="320+ ulasan" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <!-- Upload Gambar Cover Produk -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-slate-700">Gambar Cover Produk</label>
+              <button type="button" onclick="resetProductImageInput()" class="text-[11px] font-semibold text-rose-600 hover:underline">Hapus Gambar</button>
+            </div>
+
+            <div id="upload-dropzone"
+              onclick="document.getElementById('upload-img-file').click()"
+              ondragover="handleImageDragOver(event)"
+              ondragleave="handleImageDragLeave(event)"
+              ondrop="handleImageDrop(event)"
+              class="border-2 border-dashed border-slate-300 hover:border-cyan-500 bg-slate-50 hover:bg-cyan-50/40 rounded-2xl p-3.5 text-center cursor-pointer transition group">
+              <input type="file" id="upload-img-file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="handleProductImageFileSelect(event)" class="hidden" />
+              <div id="upload-file-status" class="flex flex-col items-center justify-center gap-1">
+                <div class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-cyan-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+                  <i data-lucide="image-plus" class="w-4 h-4"></i>
+                </div>
+                <p class="text-xs font-bold text-slate-700">Klik untuk Upload Gambar atau Tarik File ke Sini</p>
+                <p class="text-[10px] text-slate-400">Mendukung JPG, PNG, WEBP (Maks. 5MB) — Tersimpan ke Supabase Storage</p>
+              </div>
+            </div>
+
+            <div class="relative">
+              <i data-lucide="globe" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="url" id="upload-img" oninput="clearSelectedImageFile(); updateProductLivePreview();" placeholder="Atau tempel URL gambar eksternal (https://...)" class="w-full pl-8 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Link Checkout Lynk.id <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <i data-lucide="link" class="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="url" id="upload-lynk" required placeholder="https://lynk.id/blokkod3/produk-digital" class="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-cyan-700 font-medium focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <!-- Rich Text Editor Deskripsi -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-slate-700">Deskripsi Lengkap Produk <span class="text-[10px] font-normal text-slate-400">(Support Copy-Paste Berformat)</span></label>
+              <div class="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-lg p-0.5">
+                <button type="button" onclick="execDescFormat('bold')" title="Tebal (Bold)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="bold" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="execDescFormat('italic')" title="Miring (Italic)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="italic" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="execDescFormat('insertUnorderedList')" title="Daftar Poin (Bullet List)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="execDescFormat('insertOrderedList')" title="Daftar Bernomor (Numbered List)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="list-ordered" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+            <div id="upload-desc-editor"
+              contenteditable="true"
+              onpaste="handleRichDescPaste(event)"
+              oninput="syncDescToHiddenInput()"
+              data-placeholder="Ketik atau paste deskripsi dari Word / Docs / Notion di sini (format paragraf, bold, & list otomatis terjaga)..."
+              class="rich-editor-content w-full min-h-[100px] max-h-44 overflow-y-auto px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 leading-relaxed focus:outline-none focus:bg-white focus:border-cyan-500"></div>
+            <textarea id="upload-desc" class="hidden"></textarea>
+          </div>
+
+          <label class="flex items-center gap-2.5 pt-1 cursor-pointer select-none">
+            <input type="checkbox" id="upload-featured" checked class="w-4 h-4 rounded accent-cyan-600" />
+            <span class="text-xs font-semibold text-slate-700">Tampilkan di Daftar Produk Unggulan (Beranda)</span>
+          </label>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col justify-between bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-cyan-700 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span> Live Card Preview
+              </span>
+              <span class="text-[10px] text-slate-500">Tampilan Pembeli</span>
+            </div>
+            <div id="modal-live-card-preview" class="text-slate-800 max-w-xs mx-auto w-full"></div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+            <button type="button" onclick="closeModal('admin-product-modal')" class="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-600 transition">Batal</button>
+            <button type="submit" id="btn-submit-product" class="px-5 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+              <i data-lucide="check" class="w-4 h-4"></i> Simpan Produk
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MODAL: TAMBAH / EDIT KATEGORI -->
+  <div id="admin-category-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 text-slate-800 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <h3 id="category-modal-title" class="font-heading text-sm font-bold text-slate-900">Tambah Kategori Katalog</h3>
+        <button type="button" onclick="closeModal('admin-category-modal')" class="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <form onsubmit="submitCategoryForm(event)" class="p-6 space-y-4">
+        <input type="hidden" id="cat-form-id" value="" />
+        
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Kategori</label>
+          <input type="text" id="new-cat-name" required placeholder="Contoh: Cloud & DevOps" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Ikon Visual (Lucide Icon)</label>
+          <input type="text" id="new-cat-icon" value="code-2" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-cyan-700 font-medium mb-2 font-mono-code" />
+          <div id="cat-icon-picker-grid" class="grid grid-cols-6 gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200"></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Tema Warna Kartu Kategori</label>
+          <select id="new-cat-color" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900">
+            <option value="bg-cyan-50 text-cyan-600">Cyan Tech (Default)</option>
+            <option value="bg-pink-50 text-pink-600">Neon Pink AI</option>
+            <option value="bg-indigo-50 text-indigo-600">Indigo Modern</option>
+            <option value="bg-emerald-50 text-emerald-600">Emerald Code</option>
+            <option value="bg-amber-50 text-amber-600">Amber Gold</option>
+            <option value="bg-violet-50 text-violet-600">Violet Cyber</option>
+          </select>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('admin-category-modal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-600">Batal</button>
+          <button type="submit" id="btn-submit-category" class="px-5 py-2 brand-btn-primary rounded-xl text-xs font-bold shadow-sm">Simpan Kategori</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. MODAL: KONFIRMASI TINDAKAN -->
+  <div id="confirm-action-modal" class="hidden fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 text-slate-800 w-full max-w-sm rounded-3xl shadow-2xl p-6 space-y-4 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 id="confirm-modal-title" class="font-heading text-base font-bold text-slate-900">Konfirmasi Hapus</h3>
+        <p id="confirm-modal-desc" class="text-xs text-slate-500 leading-relaxed">Apakah Anda yakin ingin menghapus data ini?</p>
+      </div>
+      <div class="flex items-center justify-center gap-2.5 pt-2">
+        <button type="button" onclick="closeModal('confirm-action-modal')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">Batal</button>
+        <button type="button" id="confirm-modal-yes-btn" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-bold text-white shadow-sm transition">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT ENGINE & SUPABASE ADMIN INTEGRATION -->
+  <script>
+    // =========================================================================
+    // 1. SAKLAR DEPLOYMENT & KONFIGURASI SUPABASE (SAMAKAN DENGAN index.html)
+    // =========================================================================
+    const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY ke Vercel + GitHub
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+    const SUPABASE_STORAGE_BUCKET = "blokkod3-products";
+
+    let supabaseClient = null;
+    if (!IS_PREVIEW && window.supabase) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // =========================================================================
+    // 2. DATA MINIMALIS UNTUK MODE PREVIEW
+    // =========================================================================
+    const PREVIEW_CATEGORIES = [
+      { id: 'cat-1', name: 'Source Code', icon: 'code-2', color: 'bg-cyan-50 text-cyan-600' },
+      { id: 'cat-2', name: 'AI & Prompts', icon: 'sparkles', color: 'bg-pink-50 text-pink-600' }
+    ];
+
+    const PREVIEW_PRODUCTS = [
+      {
+        id: 'prod-1',
+        cat_id: 'cat-2',
+        title: 'Coding & AI Project Book',
+        price: 'Rp 49.000',
+        orig_price: 'Rp 99.000',
+        rating: '4.9',
+        reviews: '1.245 ulasan',
+        badge: 'Best Seller',
+        is_featured: true,
+        views: 128,
+        clicks: 34,
+        img_url: '',
+        lynk_url: 'https://lynk.id',
+        description: 'Panduan lengkap belajar Coding dan integrasi AI modern dengan proyek siap pakai.'
+      }
+    ];
+
+    // =========================================================================
+    // 3. STATE & SECURITY HELPERS
+    // =========================================================================
+    let isAdminLoggedIn = false;
+    let currentAdminEmail = '';
+    let currentChartMode = 'both';
+    let pendingProductImageFile = null;
+    let pendingProductImageObjectUrl = '';
+    let failedLoginAttempts = 0;
+    let loginLockoutUntil = 0;
+
+    const AVAILABLE_ICONS = [
+      'code-2', 'sparkles', 'book-open', 'layout', 'cpu', 'terminal',
+      'database', 'bot', 'layers', 'globe', 'smartphone', 'wand-2'
+    ];
+
+    let storeSettings = {
+      id: 1,
+      wa_number: '6281234567890',
+      hero_tag: 'Learn about IT, Code & AI',
+      hero_title: 'Belajar, Berkarya, Lebih Mudah dengan',
+      hero_subtitle: 'Source code, template, prompt AI, dan berbagai sumber belajar profesional untuk mendukung produktivitas IT Anda.',
+      featured_prod_id: ''
+    };
+
+    let categoriesData = [];
+    let productsData = [];
+    let dailyViewersData = [];
+    let activityLogs = [];
+
+    function escapeHtml(unsafe) {
+      if (unsafe === null || unsafe === undefined) return '';
+      return String(unsafe)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttr(unsafe) {
+      return escapeHtml(unsafe).replace(/`/g, '&#96;');
+    }
+
+    function sanitizeSafeUrl(rawUrl, fallback = 'https://lynk.id') {
+      const val = String(rawUrl || '').trim();
+      if (!val) return fallback;
+      if (/^data:image\/(png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=]+$/i.test(val)) {
+        return val;
+      }
+      try {
+        const parsed = new URL(val, window.location.origin);
+        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+          return parsed.href;
+        }
+      } catch (e) {}
+      return fallback;
+    }
+
+    function sanitizeIdentifier(idStr) {
+      return String(idStr || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
+    }
+
+    function parseNumericPrice(priceStr) {
+      if (!priceStr) return 0;
+      const digits = String(priceStr).replace(/[^0-9]/g, '');
+      return parseInt(digits, 10) || 0;
+    }
+
+    function calculateDiscountPercent(priceStr, origPriceStr) {
+      const p = parseNumericPrice(priceStr);
+      const o = parseNumericPrice(origPriceStr);
+      if (o > p && p > 0) return Math.round(((o - p) / o) * 100);
+      return 0;
+    }
+
+    function getCategoryName(catId) {
+      const found = categoriesData.find(c => c.id === catId);
+      return found ? found.name : 'Digital Product';
+    }
+
+    function stripHtmlTags(htmlStr) {
+      if (!htmlStr) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = htmlStr;
+      return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function sanitizeRichHtml(rawHtml) {
+      if (!rawHtml) return '';
+      const allowedTags = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'UL', 'OL', 'LI', 'A', 'DIV', 'SPAN', 'H1', 'H2', 'H3', 'H4']);
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(rawHtml, 'text/html');
+
+      function cleanNode(node) {
+        const children = Array.from(node.childNodes);
+        children.forEach(child => {
+          if (child.nodeType === Node.ELEMENT_NODE) {
+            const tag = child.tagName.toUpperCase();
+            if (!allowedTags.has(tag)) {
+              const textFallback = document.createTextNode(child.textContent || '');
+              node.replaceChild(textFallback, child);
+              return;
+            }
+            const hrefVal = tag === 'A' ? child.getAttribute('href') : null;
+            Array.from(child.attributes).forEach(attr => child.removeAttribute(attr.name));
+            if (tag === 'A' && hrefVal && /^https?:\/\//i.test(hrefVal)) {
+              child.setAttribute('href', hrefVal);
+              child.setAttribute('target', '_blank');
+              child.setAttribute('rel', 'noopener noreferrer');
+            }
+            cleanNode(child);
+          }
+        });
+      }
+
+      cleanNode(doc.body);
+      return doc.body.innerHTML.trim();
+    }
+
+    function formatDescriptionForDisplay(descValue) {
+      if (!descValue) return '';
+      const hasHtml = /<[a-z][\s\S]*>/i.test(descValue);
+      if (hasHtml) return sanitizeRichHtml(descValue);
+      return descValue
+        .split(/\n{2,}/)
+        .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+        .join('');
+    }
+
+    function copyToClipboard(text, label = 'Tautan') {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast(`${label} berhasil disalin ke clipboard!`, 'success');
+      } catch (err) {
+        showToast('Gagal menyalin teks.', 'error');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // =========================================================================
+    // 4. DATA SYNC & ANALYTICS ENGINE
+    // =========================================================================
+    function getLast7DaysSkeleton() {
+      const days = [];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const dateKey = `${yyyy}-${mm}-${dd}`;
+        const label = i === 0 ? 'Hari Ini' : `${d.getDate()} ${monthNames[d.getMonth()]}`;
+        days.push({ date_key: dateKey, label, views: 0, clicks: 0 });
+      }
+      return days;
+    }
+
+    async function loadAllDataFromBackend() {
+      const skeleton7d = getLast7DaysSkeleton();
+
+      if (IS_PREVIEW || !supabaseClient) {
+        categoriesData = JSON.parse(JSON.stringify(PREVIEW_CATEGORIES));
+        productsData = JSON.parse(JSON.stringify(PREVIEW_PRODUCTS));
+        dailyViewersData = skeleton7d.map((d, idx) => ({
+          ...d,
+          views: 25 + idx * 9,
+          clicks: 5 + idx * 2
+        }));
+        activityLogs = [
+          { time: 'Baru saja', text: 'Admin Command Center siap digunakan', type: 'info' }
+        ];
+        return;
+      }
+
+      try {
+        const [catRes, prodRes, setRes, anaRes, logRes] = await Promise.all([
+          supabaseClient.from('blokkod3_categories').select('*').order('created_at', { ascending: true }),
+          supabaseClient.from('blokkod3_products').select('*').order('created_at', { ascending: false }),
+          supabaseClient.from('blokkod3_store_settings').select('*').eq('id', 1).maybeSingle(),
+          supabaseClient.from('blokkod3_analytics').select('*').order('date_key', { ascending: true }).limit(14),
+          supabaseClient.from('blokkod3_activity_logs').select('*').order('created_at', { ascending: false }).limit(20)
+        ]);
+
+        categoriesData = Array.isArray(catRes.data) ? catRes.data : [];
+        productsData = Array.isArray(prodRes.data) ? prodRes.data : [];
+        if (setRes.data) {
+          storeSettings = { ...storeSettings, ...setRes.data };
+        }
+
+        const dbAnalytics = Array.isArray(anaRes.data) ? anaRes.data : [];
+        dailyViewersData = skeleton7d.map(day => {
+          const found = dbAnalytics.find(r => r.date_key === day.date_key);
+          return found ? { ...day, views: found.views || 0, clicks: found.clicks || 0 } : day;
+        });
+
+        activityLogs = Array.isArray(logRes.data)
+          ? logRes.data.map(l => ({
+              time: new Date(l.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+              text: l.detail ? `${l.action}: ${l.detail}` : l.action,
+              type: 'info'
+            }))
+          : [];
+      } catch (err) {
+        console.error('Gagal memuat data dari Supabase:', err);
+        showToast('Gagal memuat data dari Supabase. Periksa konfigurasi URL & Key.', 'error');
+      }
+    }
+
+    window.refreshAllFromBackend = async function() {
+      await loadAllDataFromBackend();
+      if (isAdminLoggedIn) {
+        renderAdminDashboard();
+        renderAdminProducts();
+        renderAdminCategories();
+        populateAdminSettingsForm();
+      }
+      showToast('Data berhasil disinkronkan!', 'success');
+    };
+
+    async function logAdminActivity(action, detail = '', type = 'info') {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const text = detail ? `${action}: ${detail}` : action;
+      activityLogs.unshift({ time: timeStr, text, type });
+      if (activityLogs.length > 25) activityLogs.pop();
+      renderAdminActivityLog();
+
+      if (!IS_PREVIEW && supabaseClient) {
+        try {
+          await supabaseClient.from('blokkod3_activity_logs').insert([{ action, detail }]);
+        } catch (err) {}
+      }
+    }
+
+    // =========================================================================
+    // 5. AUTENTIKASI ADMIN (SUPABASE AUTH)
+    // =========================================================================
+    window.submitAdminLogin = async function(e) {
+      e.preventDefault();
+      const now = Date.now();
+      if (now < loginLockoutUntil) {
+        const waitSec = Math.ceil((loginLockoutUntil - now) / 1000);
+        showToast(`Terlalu banyak percobaan login. Tunggu ${waitSec} detik.`, 'error');
+        return;
+      }
+
+      const emailVal = document.getElementById('admin-email-input').value.trim().toLowerCase();
+      const passVal = document.getElementById('admin-password-input').value;
+      const submitBtn = document.getElementById('btn-admin-login-submit');
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+        showToast('Format email administrator tidak valid.', 'error');
+        return;
+      }
+
+      if (IS_PREVIEW) {
+        failedLoginAttempts = 0;
+        await enterAdminWorkspace(emailVal || 'admin@blokkod3.id');
+        showToast('Berhasil masuk ke Admin Command Center!', 'success');
+        return;
+      }
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Memverifikasi...</span>';
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: emailVal,
+          password: passVal
+        });
+
+        if (error) throw error;
+
+        failedLoginAttempts = 0;
+        await enterAdminWorkspace(data.user?.email || emailVal);
+        await logAdminActivity('Login Admin Berhasil', data.user?.email || emailVal, 'success');
+        showToast('Selamat datang di Admin Command Center!', 'success');
+      } catch (err) {
+        failedLoginAttempts += 1;
+        if (failedLoginAttempts >= 5) {
+          loginLockoutUntil = Date.now() + 30000;
+          failedLoginAttempts = 0;
+          showToast('5x percobaan gagal. Akses login dikunci sementara selama 30 detik.', 'error');
+        } else {
+          showToast('Login gagal: ' + (err.message || 'Email atau password salah'), 'error');
+        }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Masuk ke Dashboard Admin</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>';
+        if (window.lucide) lucide.createIcons();
+      }
+    };
+
+    async function enterAdminWorkspace(email) {
+      isAdminLoggedIn = true;
+      currentAdminEmail = email;
+      await loadAllDataFromBackend();
+
+      document.getElementById('admin-login-screen').classList.add('hidden');
+      document.getElementById('admin-panel-wrapper').classList.remove('hidden');
+      document.getElementById('sidebar-admin-username').textContent = email;
+
+      const dbBadge = document.getElementById('db-status-badge');
+      const dbDesc = document.getElementById('db-status-desc');
+      if (IS_PREVIEW) {
+        dbBadge.innerHTML = '<i data-lucide="flask-conical" class="w-3 h-3"></i> Memori Preview';
+        dbBadge.className = 'text-amber-600 font-bold flex items-center gap-1';
+        dbDesc.textContent = 'Ubah IS_PREVIEW = false sebelum deploy ke Vercel.';
+      } else {
+        dbBadge.innerHTML = '<i data-lucide="database" class="w-3 h-3"></i> Supabase Cloud';
+        dbBadge.className = 'text-emerald-600 font-bold flex items-center gap-1';
+        dbDesc.textContent = 'Terhubung real-time ke PostgreSQL & Auth Supabase.';
+      }
+
+      switchAdminTab('dashboard');
+    }
+
+    window.logoutAdmin = async function() {
+      if (!IS_PREVIEW && supabaseClient) {
+        try {
+          await supabaseClient.auth.signOut();
+        } catch (err) {}
+      }
+      isAdminLoggedIn = false;
+      currentAdminEmail = '';
+      document.getElementById('admin-panel-wrapper').classList.add('hidden');
+      document.getElementById('admin-login-screen').classList.remove('hidden');
+      document.getElementById('admin-password-input').value = '';
+      showToast('Anda telah keluar dari sesi Administrator.');
+    };
+
+    // =========================================================================
+    // 6. HELPER UI & MODAL
+    // =========================================================================
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const el = document.createElement('div');
+      const styles = {
+        error: 'bg-rose-600 border-rose-400 text-white',
+        success: 'bg-emerald-600 border-emerald-400 text-white',
+        info: 'bg-slate-900 border-cyan-500/40 text-white'
+      };
+      const iconName = type === 'error' ? 'alert-circle' : type === 'success' ? 'check-circle-2' : 'sparkles';
+      el.className = `${styles[type] || styles.info} border text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl pointer-events-auto flex items-center gap-2.5 transition-all duration-300`;
+      el.innerHTML = `<i data-lucide="${iconName}" class="w-4 h-4 shrink-0"></i> <span>${escapeHtml(msg)}</span>`;
+      container.appendChild(el);
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => {
+        el.classList.add('opacity-0', 'translate-x-4');
+        setTimeout(() => el.remove(), 300);
+      }, 3200);
+    }
+
+    window.openModal = function(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.closeModal = function(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    };
+
+    function openConfirmModal(title, desc, onConfirm) {
+      document.getElementById('confirm-modal-title').textContent = title;
+      document.getElementById('confirm-modal-desc').textContent = desc;
+      const yesBtn = document.getElementById('confirm-modal-yes-btn');
+      yesBtn.onclick = () => {
+        closeModal('confirm-action-modal');
+        if (typeof onConfirm === 'function') onConfirm();
+      };
+      openModal('confirm-action-modal');
+    }
+
+    // =========================================================================
+    // 7. NAVIGASI ADMIN & DASHBOARD ANALYTICS
+    // =========================================================================
+    window.toggleAdminMobileSidebar = function(show) {
+      const sidebar = document.getElementById('admin-sidebar');
+      const backdrop = document.getElementById('admin-sidebar-backdrop');
+      if (!sidebar || !backdrop) return;
+      if (show) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    };
+
+    window.switchAdminTab = function(tabName) {
+      toggleAdminMobileSidebar(false);
+      ['dashboard', 'products', 'categories', 'settings'].forEach(t => {
+        const viewEl = document.getElementById('adm-view-' + t);
+        const btnEl = document.getElementById('adm-tab-' + t);
+        const mobBtnEl = document.getElementById('adm-mob-tab-' + t);
+        if (viewEl) viewEl.classList.add('hidden');
+        if (btnEl) {
+          btnEl.className = 'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-xs font-semibold transition';
+        }
+        if (mobBtnEl) {
+          mobBtnEl.className = 'flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-xl text-slate-500 hover:bg-slate-100 font-semibold text-[10px] transition';
+        }
+      });
+
+      const activeView = document.getElementById('adm-view-' + tabName);
+      const activeBtn = document.getElementById('adm-tab-' + tabName);
+      const activeMobBtn = document.getElementById('adm-mob-tab-' + tabName);
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.className = 'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-cyan-50 text-cyan-700 border-l-4 border-cyan-500 text-xs font-bold transition';
+      }
+      if (activeMobBtn) {
+        activeMobBtn.className = 'flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-xl bg-cyan-50 text-cyan-700 font-bold text-[10px] transition';
+      }
+
+      const titles = {
+        dashboard: { title: 'Executive Dashboard', bread: 'Overview & Analitik' },
+        products: { title: 'Manajemen Produk & Lynk.id', bread: 'Kelola Produk' },
+        categories: { title: 'Kategori Katalog', bread: 'Kelola Kategori' },
+        settings: { title: 'Pengaturan Toko & Database', bread: 'Pengaturan & Backup' }
+      };
+      const meta = titles[tabName] || titles.dashboard;
+      document.getElementById('admin-page-title').textContent = meta.title;
+      document.getElementById('admin-breadcrumb-current').textContent = meta.bread;
+
+      updateSidebarBadges();
+
+      if (tabName === 'dashboard') renderAdminDashboard();
+      if (tabName === 'products') {
+        populateAdminCategoryFilter();
+        renderAdminProducts();
+      }
+      if (tabName === 'categories') renderAdminCategories();
+      if (tabName === 'settings') populateAdminSettingsForm();
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    function updateSidebarBadges() {
+      const prodBadge = document.getElementById('sidebar-prod-badge');
+      const catBadge = document.getElementById('sidebar-cat-badge');
+      if (prodBadge) prodBadge.textContent = productsData.length;
+      if (catBadge) catBadge.textContent = categoriesData.length;
+    }
+
+    window.handleAdminGlobalSearch = function(val) {
+      const q = (val || '').trim();
+      if (!q) return;
+      switchAdminTab('products');
+      const searchInput = document.getElementById('adm-prod-search');
+      if (searchInput) {
+        searchInput.value = q;
+        renderAdminProducts();
+      }
+    };
+
+    window.setChartMode = function(mode) {
+      currentChartMode = mode;
+      ['both', 'views', 'clicks'].forEach(m => {
+        const btn = document.getElementById('chart-btn-' + m);
+        if (btn) {
+          btn.className = m === mode
+            ? 'px-2.5 py-1 rounded-lg bg-white text-cyan-700 font-bold shadow-2xs border border-slate-200 transition'
+            : 'px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition';
+        }
+      });
+      renderAdminDashboard();
+    };
+
+    function renderAdminDashboard() {
+      updateSidebarBadges();
+      const todayItem = dailyViewersData[dailyViewersData.length - 1] || { views: 0, clicks: 0 };
+      const total7dViews = dailyViewersData.reduce((acc, d) => acc + (d.views || 0), 0);
+      const totalClicks = productsData.reduce((acc, p) => acc + (p.clicks || 0), 0);
+      const totalProdViews = productsData.reduce((acc, p) => acc + (p.views || 0), 0);
+      const ctr = totalProdViews > 0 ? ((totalClicks / totalProdViews) * 100).toFixed(1) : '0.0';
+      const featuredCount = productsData.filter(p => p.is_featured !== false).length;
+
+      document.getElementById('admin-today-viewer-count').textContent = todayItem.views || 0;
+      document.getElementById('admin-total-7d-viewers').textContent = `Total 7 hr: ${total7dViews}`;
+      document.getElementById('admin-total-clicks-count').textContent = totalClicks;
+      document.getElementById('admin-conversion-rate').textContent = `CTR: ${ctr}%`;
+      document.getElementById('admin-total-prod-count').textContent = productsData.length;
+      document.getElementById('admin-featured-prod-count').textContent = `${featuredCount} Produk Unggulan`;
+      document.getElementById('admin-total-cat-count').textContent = categoriesData.length;
+
+      const maxVal = Math.max(...dailyViewersData.map(d => Math.max(d.views || 0, d.clicks || 0)), 5);
+      const chartEl = document.getElementById('admin-daily-viewers-chart');
+      if (chartEl) {
+        chartEl.innerHTML = dailyViewersData.map(d => {
+          const views = d.views || 0;
+          const clicks = d.clicks || 0;
+          const viewPct = Math.max(10, Math.round((views / maxVal) * 100));
+          const clickPct = Math.max(8, Math.round((clicks / maxVal) * 100));
+
+          const showViews = currentChartMode === 'both' || currentChartMode === 'views';
+          const showClicks = currentChartMode === 'both' || currentChartMode === 'clicks';
+
+          return `
+            <div class="flex flex-col items-center gap-2 h-full justify-end group relative">
+              <div class="opacity-0 group-hover:opacity-100 transition pointer-events-none absolute -top-6 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-md text-[10px] whitespace-nowrap z-20">
+                <span class="text-cyan-700 font-bold">${views} views</span> &bull; <span class="text-pink-600 font-bold">${clicks} klik</span>
+              </div>
+
+              <div class="flex items-end justify-center gap-1 sm:gap-1.5 w-full h-full">
+                ${showViews ? `
+                  <div class="flex flex-col items-center justify-end h-full flex-1 max-w-[24px]">
+                    <span class="text-[9px] font-bold text-cyan-700 mb-1 tabular-nums">${views}</span>
+                    <div style="height: ${viewPct}%" class="w-full rounded-t-md bg-gradient-to-t from-cyan-500 to-[#00f5d4] group-hover:brightness-105 transition-all duration-300"></div>
+                  </div>
+                ` : ''}
+                ${showClicks ? `
+                  <div class="flex flex-col items-center justify-end h-full flex-1 max-w-[24px]">
+                    <span class="text-[9px] font-bold text-pink-600 mb-1 tabular-nums">${clicks}</span>
+                    <div style="height: ${clickPct}%" class="w-full rounded-t-md bg-gradient-to-t from-rose-500 to-[#ff1e7a] group-hover:brightness-105 transition-all duration-300"></div>
+                  </div>
+                ` : ''}
+              </div>
+
+              <span class="text-[10px] font-semibold text-slate-500 group-hover:text-slate-900 truncate">${escapeHtml(d.label)}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const avgViews = dailyViewersData.length > 0 ? Math.round(total7dViews / dailyViewersData.length) : 0;
+      const summaryEl = document.getElementById('chart-summary-stats');
+      if (summaryEl) {
+        summaryEl.innerHTML = `Rata-rata: <strong class="text-slate-900">${avgViews} views/hari</strong> &bull; Total Klik: <strong class="text-cyan-700">${totalClicks} klik</strong>`;
+      }
+
+      const topListEl = document.getElementById('admin-top-products-list');
+      if (topListEl) {
+        if (productsData.length === 0) {
+          topListEl.innerHTML = `<div class="py-6 text-center text-xs text-slate-500">Belum ada data produk.</div>`;
+        } else {
+          const sortedProds = [...productsData].sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, 4);
+          topListEl.innerHTML = sortedProds.map((p, idx) => {
+            const views = p.views || 0;
+            const clicks = p.clicks || 0;
+            const conv = views > 0 ? Math.min(100, Math.round((clicks / views) * 100)) : 0;
+            return `
+              <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-slate-300 transition">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-cyan-700 font-heading font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                    #${idx + 1}
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-xs font-bold text-slate-900 truncate">${escapeHtml(p.title)}</p>
+                    <p class="text-[10px] text-slate-500">${escapeHtml(getCategoryName(p.cat_id))} &bull; <span class="text-emerald-600 font-semibold">${escapeHtml(p.price)}</span></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 shrink-0">
+                  <div class="text-right">
+                    <p class="text-xs font-extrabold text-cyan-700 tabular-nums">${clicks} Klik</p>
+                    <p class="text-[10px] text-slate-500 tabular-nums">${views} views (${conv}%)</p>
+                  </div>
+                  <button onclick="openProductModal('${sanitizeIdentifier(p.id)}')" title="Edit Produk" class="p-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 transition">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      renderAdminActivityLog();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderAdminActivityLog() {
+      const logEl = document.getElementById('admin-activity-log');
+      if (!logEl) return;
+      if (activityLogs.length === 0) {
+        logEl.innerHTML = `<div class="py-4 text-center text-xs text-slate-400">Belum ada aktivitas tercatat.</div>`;
+        return;
+      }
+      logEl.innerHTML = activityLogs.map(item => {
+        const dotColor = item.type === 'success' ? 'bg-emerald-500' : item.type === 'warning' ? 'bg-amber-500' : 'bg-cyan-500';
+        return `
+          <div class="flex items-start gap-2.5 text-xs p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="w-2 h-2 rounded-full ${dotColor} mt-1.5 shrink-0"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-slate-700 font-medium leading-snug">${escapeHtml(item.text)}</p>
+              <span class="text-[10px] text-slate-400">${escapeHtml(item.time)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.clearActivityLog = function() {
+      activityLogs = [];
+      renderAdminActivityLog();
+      showToast('Tampilan log aktivitas dibersihkan.');
+    };
+
+    // =========================================================================
+    // 8. KELOLA PRODUK (CRUD SUPABASE + UPLOAD GAMBAR + LIVE PREVIEW)
+    // =========================================================================
+    function createLivePreviewCardHTML(prod) {
+      const safeTitle = escapeHtml(prod.title);
+      const safeCatName = escapeHtml(getCategoryName(prod.cat_id));
+      const safeBadge = escapeHtml(prod.badge);
+      const safeRating = escapeHtml(prod.rating || '4.9');
+      const safeReviews = escapeHtml(prod.reviews || '100+ ulasan');
+      const safePrice = escapeHtml(prod.price);
+      const safeOrigPrice = escapeHtml(prod.orig_price || '');
+      const safeImgUrl = prod.img_url ? sanitizeSafeUrl(prod.img_url, '') : '';
+      const disc = calculateDiscountPercent(prod.price, prod.orig_price);
+
+      const imageBlock = safeImgUrl
+        ? `<img src="${escapeAttr(safeImgUrl)}" alt="${escapeAttr(prod.title)}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/00f5d4?text=blokkod3';" class="w-full h-40 object-cover rounded-xl mb-3" />`
+        : `<div class="w-full h-40 rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 flex flex-col items-center justify-center p-4 mb-3 relative overflow-hidden">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#00f5d4] to-[#ff1e7a] flex items-center justify-center text-slate-950 font-black text-base shadow-lg">b3</div>
+            <span class="text-[11px] text-cyan-300 font-semibold mt-2.5 truncate max-w-full">${safeCatName}</span>
+          </div>`;
+
+      return `
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="relative">
+              ${imageBlock}
+              ${safeBadge ? `<span class="absolute top-2.5 left-2.5 bg-[#ff1e7a] text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow">${safeBadge}</span>` : ''}
+              ${disc > 0 ? `<span class="absolute top-2.5 right-2.5 bg-slate-900/90 text-[#00f5d4] text-[10px] font-extrabold px-2 py-0.5 rounded-lg border border-cyan-500/30">-${disc}%</span>` : ''}
+            </div>
+            <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-wide">${safeCatName}</span>
+            <h3 class="font-heading text-sm font-bold text-slate-900 mt-0.5 line-clamp-2">${safeTitle}</h3>
+            <div class="flex items-center gap-1.5 mt-1.5 text-[11px] text-slate-500">
+              <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-amber-400"></i>
+              <span class="font-bold text-slate-700">${safeRating}</span>
+              <span>(${safeReviews})</span>
+            </div>
+          </div>
+
+          <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div>
+              <p class="font-heading text-sm font-extrabold text-slate-900">${safePrice}</p>
+              <p class="text-[10px] text-slate-400 line-through">${safeOrigPrice}</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="px-2.5 py-1.5 bg-slate-100 text-slate-700 rounded-xl text-[11px] font-bold">Detail</span>
+              <span class="px-3 py-1.5 brand-btn-primary rounded-xl text-[11px] font-bold shadow-sm flex items-center gap-1">
+                <span>Beli</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function populateAdminCategoryFilter() {
+      const filterSel = document.getElementById('adm-prod-cat-filter');
+      if (!filterSel) return;
+      const currentVal = filterSel.value || 'all';
+      filterSel.innerHTML = `<option value="all">Semua Kategori (${categoriesData.length})</option>` +
+        categoriesData.map(c => `<option value="${sanitizeIdentifier(c.id)}">${escapeHtml(c.name)}</option>`).join('');
+      filterSel.value = currentVal;
+    }
+
+    window.renderAdminProducts = function() {
+      const tbody = document.getElementById('admin-product-table-body');
+      if (!tbody) return;
+
+      const q = (document.getElementById('adm-prod-search')?.value || '').trim().toLowerCase();
+      const catFilter = document.getElementById('adm-prod-cat-filter')?.value || 'all';
+      const badgeFilter = document.getElementById('adm-prod-badge-filter')?.value || 'all';
+
+      const filtered = productsData.filter(p => {
+        const matchQ = !q ||
+          (p.title || '').toLowerCase().includes(q) ||
+          stripHtmlTags(p.description || '').toLowerCase().includes(q) ||
+          (p.lynk_url || '').toLowerCase().includes(q);
+        const matchCat = catFilter === 'all' || p.cat_id === catFilter;
+        const matchBadge = badgeFilter === 'all' || (p.badge || '') === badgeFilter;
+        return matchQ && matchCat && matchBadge;
+      });
+
+      const showingEl = document.getElementById('admin-product-showing-text');
+      if (showingEl) showingEl.textContent = `Menampilkan ${filtered.length} dari ${productsData.length} produk digital`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-10 text-center text-slate-500">
+              Belum ada produk atau tidak ditemukan hasil yang cocok.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(prod => {
+        const safeId = sanitizeIdentifier(prod.id);
+        const safeTitle = escapeHtml(prod.title);
+        const safeDescPreview = escapeHtml(stripHtmlTags(prod.description || ''));
+        const safeBadge = escapeHtml(prod.badge);
+        const safePrice = escapeHtml(prod.price);
+        const safeOrigPrice = escapeHtml(prod.orig_price || '');
+        const safeLynkUrl = sanitizeSafeUrl(prod.lynk_url, 'https://lynk.id');
+        const safeImgUrl = prod.img_url ? sanitizeSafeUrl(prod.img_url, '') : '';
+        const catName = escapeHtml(getCategoryName(prod.cat_id));
+        const disc = calculateDiscountPercent(prod.price, prod.orig_price);
+        const thumb = safeImgUrl
+          ? `<img src="${escapeAttr(safeImgUrl)}" alt="${escapeAttr(prod.title)}" onerror="this.style.display='none'" class="w-10 h-10 rounded-xl object-cover shrink-0 border border-slate-200" />`
+          : `<div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-50 to-pink-50 border border-cyan-200 flex items-center justify-center text-cyan-700 font-heading font-black text-xs shrink-0">b3</div>`;
+
+        return `
+          <tr class="hover:bg-slate-50/90 transition group">
+            <td class="py-3.5 px-4 max-w-xs">
+              <div class="flex items-center gap-3">
+                ${thumb}
+                <div class="min-w-0">
+                  <p class="font-heading font-bold text-slate-900 text-xs truncate">${safeTitle}</p>
+                  <p class="text-[11px] text-slate-500 truncate max-w-[220px]">${safeDescPreview}</p>
+                </div>
+              </div>
+            </td>
+
+            <td class="py-3.5 px-4 whitespace-nowrap">
+              <div class="flex flex-col items-start gap-1">
+                <span class="px-2.5 py-0.5 rounded-md bg-cyan-50 text-cyan-700 border border-cyan-200/70 text-[10px] font-bold">${catName}</span>
+                ${safeBadge ? `<span class="px-2 py-0.5 rounded-full bg-pink-50 text-pink-700 border border-pink-200/70 text-[10px] font-bold">${safeBadge}</span>` : ''}
+              </div>
+            </td>
+
+            <td class="py-3.5 px-4 whitespace-nowrap tabular-nums">
+              <p class="font-heading font-bold text-slate-900 text-xs">${safePrice}</p>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-[10px] text-slate-400 line-through">${safeOrigPrice}</span>
+                ${disc > 0 ? `<span class="text-[10px] font-bold text-emerald-600">-${disc}%</span>` : ''}
+              </div>
+            </td>
+
+            <td class="py-3.5 px-4 whitespace-nowrap">
+              <div class="flex items-center gap-1.5">
+                <a href="${escapeAttr(safeLynkUrl)}" target="_blank" rel="noopener noreferrer" class="text-[11px] text-cyan-700 font-medium hover:underline font-mono-code truncate max-w-[150px]">${escapeHtml(safeLynkUrl)}</a>
+                <button type="button" data-copy-url="${escapeAttr(safeLynkUrl)}" onclick="copyToClipboard(this.getAttribute('data-copy-url'), 'Link Lynk.id')" title="Salin URL Lynk.id" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition">
+                  <i data-lucide="copy" class="w-3 h-3"></i>
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-0.5 tabular-nums">${prod.clicks || 0} klik &bull; ${prod.views || 0} views</p>
+            </td>
+
+            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+              <button type="button" onclick="toggleProductFeatured('${safeId}')" class="px-2.5 py-1 rounded-full text-[10px] font-bold transition ${prod.is_featured !== false ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">
+                ${prod.is_featured !== false ? 'Unggulan' : 'Standar'}
+              </button>
+            </td>
+
+            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+              <div class="inline-flex items-center gap-1.5">
+                <button type="button" onclick="openProductModal('${safeId}')" title="Edit Produk" class="px-2.5 py-1.5 rounded-lg bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-200/80 font-bold text-[11px] transition flex items-center gap-1">
+                  <i data-lucide="pencil" class="w-3 h-3"></i> Edit
+                </button>
+                <button type="button" onclick="duplicateProduct('${safeId}')" title="Duplikat Produk" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition">
+                  <i data-lucide="copy-plus" class="w-3.5 h-3.5"></i>
+                </button>
+                <button type="button" onclick="confirmDeleteProduct('${safeId}')" title="Hapus Produk" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.toggleProductFeatured = async function(prodId) {
+      const prod = productsData.find(p => p.id === prodId);
+      if (!prod) return;
+      const newVal = prod.is_featured === false ? true : false;
+
+      if (!IS_PREVIEW && supabaseClient) {
+        const { error } = await supabaseClient
+          .from('blokkod3_products')
+          .update({ is_featured: newVal })
+          .eq('id', prodId);
+        if (error) {
+          showToast('Gagal mengubah status unggulan: ' + error.message, 'error');
+          return;
+        }
+      }
+
+      prod.is_featured = newVal;
+      renderAdminProducts();
+      renderAdminDashboard();
+      showToast(`Status unggulan "${prod.title}" diperbarui.`);
+    };
+
+    window.duplicateProduct = async function(prodId) {
+      const orig = productsData.find(p => p.id === prodId);
+      if (!orig) return;
+
+      const newProd = {
+        id: 'prod-' + Date.now(),
+        cat_id: orig.cat_id,
+        title: orig.title + ' (Copy)',
+        price: orig.price,
+        orig_price: orig.orig_price,
+        rating: orig.rating,
+        reviews: orig.reviews,
+        badge: orig.badge,
+        is_featured: orig.is_featured,
+        img_url: orig.img_url,
+        lynk_url: orig.lynk_url,
+        description: orig.description,
+        views: 0,
+        clicks: 0
+      };
+
+      if (!IS_PREVIEW && supabaseClient) {
+        const { error } = await supabaseClient.from('blokkod3_products').insert([newProd]);
+        if (error) {
+          showToast('Gagal menduplikat produk: ' + error.message, 'error');
+          return;
+        }
+      }
+
+      productsData.unshift(newProd);
+      renderAdminProducts();
+      renderAdminDashboard();
+      await logAdminActivity('Duplikat Produk', orig.title, 'info');
+      showToast('Produk berhasil diduplikat!', 'success');
+    };
+
+    window.openProductModal = function(editProdId = null) {
+      const sel = document.getElementById('upload-cat');
+      if (sel) {
+        sel.innerHTML = categoriesData.length > 0
+          ? categoriesData.map(c => `<option value="${sanitizeIdentifier(c.id)}">${escapeHtml(c.name)}</option>`).join('')
+          : `<option value="">-- Buat Kategori Terlebih Dahulu --</option>`;
+      }
+
+      clearSelectedImageFile();
+      const idInput = document.getElementById('prod-form-id');
+      const modalTitle = document.getElementById('product-modal-title');
+      const descEditor = document.getElementById('upload-desc-editor');
+
+      if (editProdId) {
+        const prod = productsData.find(p => p.id === editProdId);
+        if (!prod) return;
+        modalTitle.textContent = 'Edit Produk Digital';
+        idInput.value = prod.id;
+        document.getElementById('upload-cat').value = prod.cat_id || '';
+        document.getElementById('upload-badge').value = prod.badge || '';
+        document.getElementById('upload-title').value = prod.title;
+        document.getElementById('upload-price').value = prod.price;
+        document.getElementById('upload-orig-price').value = prod.orig_price || '';
+        document.getElementById('upload-rating').value = prod.rating || '4.9';
+        document.getElementById('upload-reviews').value = prod.reviews || '100+ ulasan';
+        document.getElementById('upload-img').value = prod.img_url || '';
+        document.getElementById('upload-lynk').value = prod.lynk_url || 'https://lynk.id';
+        const formattedDesc = formatDescriptionForDisplay(prod.description || '');
+        if (descEditor) descEditor.innerHTML = formattedDesc;
+        document.getElementById('upload-desc').value = formattedDesc;
+        document.getElementById('upload-featured').checked = prod.is_featured !== false;
+      } else {
+        modalTitle.textContent = 'Tambah Produk Digital Baru';
+        idInput.value = '';
+        document.getElementById('upload-badge').value = 'Baru';
+        document.getElementById('upload-title').value = '';
+        document.getElementById('upload-price').value = 'Rp 79.000';
+        document.getElementById('upload-orig-price').value = 'Rp 149.000';
+        document.getElementById('upload-rating').value = '5.0';
+        document.getElementById('upload-reviews').value = 'Baru dirilis';
+        document.getElementById('upload-img').value = '';
+        document.getElementById('upload-lynk').value = 'https://lynk.id';
+        if (descEditor) descEditor.innerHTML = '';
+        document.getElementById('upload-desc').value = '';
+        document.getElementById('upload-featured').checked = true;
+      }
+
+      updateProductLivePreview();
+      openModal('admin-product-modal');
+    };
+
+    window.handleImageDragOver = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('upload-dropzone');
+      if (dz) dz.classList.add('border-cyan-500', 'bg-cyan-50/70');
+    };
+
+    window.handleImageDragLeave = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('upload-dropzone');
+      if (dz) dz.classList.remove('border-cyan-500', 'bg-cyan-50/70');
+    };
+
+    window.handleImageDrop = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      handleImageDragLeave(e);
+      const file = e.dataTransfer?.files?.[0];
+      if (file) processSelectedImageFile(file);
+    };
+
+    window.handleProductImageFileSelect = function(e) {
+      const file = e.target?.files?.[0];
+      if (file) processSelectedImageFile(file);
+    };
+
+    function processSelectedImageFile(file) {
+      if (!file.type.startsWith('image/')) {
+        showToast('File harus berupa gambar (JPG, PNG, WEBP).', 'error');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Ukuran gambar maksimal 5MB.', 'error');
+        return;
+      }
+
+      if (pendingProductImageObjectUrl) {
+        URL.revokeObjectURL(pendingProductImageObjectUrl);
+      }
+      pendingProductImageFile = file;
+      pendingProductImageObjectUrl = URL.createObjectURL(file);
+
+      const statusEl = document.getElementById('upload-file-status');
+      if (statusEl) {
+        statusEl.innerHTML = `
+          <div class="flex items-center gap-2 text-emerald-700 font-bold text-xs">
+            <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+            <span class="truncate max-w-[240px]">${escapeHtml(file.name)}</span>
+            <span class="text-[10px] font-normal text-slate-500">(${(file.size / 1024).toFixed(0)} KB)</span>
+          </div>
+          <p class="text-[10px] text-cyan-700">Siap diunggah saat menyimpan produk</p>
+        `;
+        if (window.lucide) lucide.createIcons();
+      }
+      updateProductLivePreview();
+    }
+
+    window.clearSelectedImageFile = function() {
+      pendingProductImageFile = null;
+      if (pendingProductImageObjectUrl) {
+        URL.revokeObjectURL(pendingProductImageObjectUrl);
+        pendingProductImageObjectUrl = '';
+      }
+      const fileInput = document.getElementById('upload-img-file');
+      if (fileInput) fileInput.value = '';
+      const statusEl = document.getElementById('upload-file-status');
+      if (statusEl) {
+        statusEl.innerHTML = `
+          <div class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-cyan-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+            <i data-lucide="image-plus" class="w-4 h-4"></i>
+          </div>
+          <p class="text-xs font-bold text-slate-700">Klik untuk Upload Gambar atau Tarik File ke Sini</p>
+          <p class="text-[10px] text-slate-400">Mendukung JPG, PNG, WEBP (Maks. 5MB) — Tersimpan ke Supabase Storage</p>
+        `;
+        if (window.lucide) lucide.createIcons();
+      }
+    };
+
+    window.resetProductImageInput = function() {
+      clearSelectedImageFile();
+      const urlInput = document.getElementById('upload-img');
+      if (urlInput) urlInput.value = '';
+      updateProductLivePreview();
+    };
+
+    function compressImageForFallback(file, maxWidth = 900, quality = 0.8) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onerror = () => reject(new Error('Format gambar tidak valid.'));
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadProductImageToSupabase(file) {
+      if (!file) return null;
+      if (IS_PREVIEW || !supabaseClient) {
+        return await compressImageForFallback(file);
+      }
+
+      const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+      const filePath = `covers/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+      const { error: uploadErr } = await supabaseClient.storage
+        .from(SUPABASE_STORAGE_BUCKET)
+        .upload(filePath, file, { cacheControl: '3600', upsert: false });
+
+      if (uploadErr) {
+        console.warn('Supabase Storage upload fallback aktif:', uploadErr.message);
+        showToast('Bucket Storage belum dibuat — gambar dikompresi & disimpan otomatis ke database.', 'info');
+        return await compressImageForFallback(file);
+      }
+
+      const { data: publicData } = supabaseClient.storage
+        .from(SUPABASE_STORAGE_BUCKET)
+        .getPublicUrl(filePath);
+
+      return publicData?.publicUrl || '';
+    }
+
+    window.execDescFormat = function(command) {
+      const editor = document.getElementById('upload-desc-editor');
+      if (!editor) return;
+      editor.focus();
+      document.execCommand(command, false, null);
+      syncDescToHiddenInput();
+    };
+
+    window.handleRichDescPaste = function(e) {
+      const clipboardData = e.clipboardData || window.clipboardData;
+      if (!clipboardData) return;
+
+      const htmlContent = clipboardData.getData('text/html');
+      const plainText = clipboardData.getData('text/plain');
+
+      if (htmlContent) {
+        e.preventDefault();
+        const cleanHtml = sanitizeRichHtml(htmlContent);
+        document.execCommand('insertHTML', false, cleanHtml);
+        syncDescToHiddenInput();
+      } else if (plainText) {
+        e.preventDefault();
+        const formattedPlain = plainText
+          .split(/\n{2,}/)
+          .map(p => `<p>${escapeHtml(p).replace(/\n/g, '<br>')}</p>`)
+          .join('');
+        document.execCommand('insertHTML', false, formattedPlain);
+        syncDescToHiddenInput();
+      }
+    };
+
+    window.syncDescToHiddenInput = function() {
+      const editor = document.getElementById('upload-desc-editor');
+      const hiddenTextarea = document.getElementById('upload-desc');
+      if (editor && hiddenTextarea) {
+        hiddenTextarea.value = sanitizeRichHtml(editor.innerHTML);
+      }
+    };
+
+    window.updateProductLivePreview = function() {
+      const previewContainer = document.getElementById('modal-live-card-preview');
+      if (!previewContainer) return;
+
+      const resolvedImg = pendingProductImageObjectUrl || document.getElementById('upload-img')?.value.trim() || '';
+
+      const mockProd = {
+        cat_id: document.getElementById('upload-cat')?.value || '',
+        badge: document.getElementById('upload-badge')?.value || '',
+        title: document.getElementById('upload-title')?.value.trim() || 'Judul Produk Digital Anda',
+        price: document.getElementById('upload-price')?.value.trim() || 'Rp 79.000',
+        orig_price: document.getElementById('upload-orig-price')?.value.trim() || 'Rp 149.000',
+        rating: document.getElementById('upload-rating')?.value.trim() || '5.0',
+        reviews: document.getElementById('upload-reviews')?.value.trim() || 'Baru',
+        img_url: resolvedImg
+      };
+
+      previewContainer.innerHTML = createLivePreviewCardHTML(mockProd);
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.submitProductForm = async function(e) {
+      e.preventDefault();
+      syncDescToHiddenInput();
+      const btn = document.getElementById('btn-submit-product');
+      const editId = document.getElementById('prod-form-id').value;
+      const catIdVal = document.getElementById('upload-cat').value || null;
+      const descHtmlVal = document.getElementById('upload-desc').value.trim();
+
+      if (!stripHtmlTags(descHtmlVal)) {
+        showToast('Deskripsi produk tidak boleh kosong.', 'error');
+        document.getElementById('upload-desc-editor')?.focus();
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btn.innerHTML = '<span>Mengunggah & Menyimpan...</span>';
+
+        let finalImgUrl = document.getElementById('upload-img').value.trim();
+        if (pendingProductImageFile) {
+          const uploadedUrl = await uploadProductImageToSupabase(pendingProductImageFile);
+          if (uploadedUrl) finalImgUrl = uploadedUrl;
+        }
+
+        const payload = {
+          cat_id: catIdVal,
+          badge: document.getElementById('upload-badge').value,
+          title: document.getElementById('upload-title').value.trim(),
+          price: document.getElementById('upload-price').value.trim(),
+          orig_price: document.getElementById('upload-orig-price').value.trim(),
+          rating: document.getElementById('upload-rating').value.trim() || '4.9',
+          reviews: document.getElementById('upload-reviews').value.trim() || '100+ ulasan',
+          img_url: finalImgUrl,
+          lynk_url: document.getElementById('upload-lynk').value.trim(),
+          description: descHtmlVal,
+          is_featured: document.getElementById('upload-featured').checked
+        };
+
+        if (editId) {
+          if (!IS_PREVIEW && supabaseClient) {
+            const { error } = await supabaseClient
+              .from('blokkod3_products')
+              .update(payload)
+              .eq('id', editId);
+            if (error) throw error;
+          }
+          const idx = productsData.findIndex(p => p.id === editId);
+          if (idx !== -1) productsData[idx] = { ...productsData[idx], ...payload };
+          await logAdminActivity('Update Produk', payload.title, 'success');
+          showToast(`Produk "${payload.title}" berhasil diperbarui!`, 'success');
+        } else {
+          const newRecord = {
+            id: 'prod-' + Date.now(),
+            ...payload,
+            views: 0,
+            clicks: 0
+          };
+          if (!IS_PREVIEW && supabaseClient) {
+            const { error } = await supabaseClient
+              .from('blokkod3_products')
+              .insert([newRecord]);
+            if (error) throw error;
+          }
+          productsData.unshift(newRecord);
+          await logAdminActivity('Tambah Produk Baru', payload.title, 'success');
+          showToast(`Produk "${payload.title}" berhasil disimpan!`, 'success');
+        }
+
+        pendingProductImageFile = null;
+        closeModal('admin-product-modal');
+        renderAdminProducts();
+        renderAdminDashboard();
+        renderAdminCategories();
+      } catch (err) {
+        showToast('Gagal menyimpan produk: ' + (err.message || 'Kesalahan database'), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Simpan Produk';
+        if (window.lucide) lucide.createIcons();
+      }
+    };
+
+    window.confirmDeleteProduct = function(prodId) {
+      const prod = productsData.find(p => p.id === prodId);
+      if (!prod) return;
+      openConfirmModal(
+        'Hapus Produk Digital?',
+        `Produk "${prod.title}" akan dihapus secara permanen dari database.`,
+        async () => {
+          if (!IS_PREVIEW && supabaseClient) {
+            const { error } = await supabaseClient
+              .from('blokkod3_products')
+              .delete()
+              .eq('id', prodId);
+            if (error) {
+              showToast('Gagal menghapus produk: ' + error.message, 'error');
+              return;
+            }
+          }
+          productsData = productsData.filter(p => p.id !== prodId);
+          renderAdminProducts();
+          renderAdminDashboard();
+          renderAdminCategories();
+          await logAdminActivity('Hapus Produk', prod.title, 'warning');
+          showToast('Produk telah dihapus.', 'info');
+        }
+      );
+    };
+
+    // =========================================================================
+    // 9. KELOLA KATEGORI (CRUD SUPABASE)
+    // =========================================================================
+    function renderAdminCategories() {
+      const gridEl = document.getElementById('admin-categories-grid');
+      if (!gridEl) return;
+
+      if (categoriesData.length === 0) {
+        gridEl.innerHTML = `<div class="col-span-full admin-card rounded-2xl p-8 text-center text-xs text-slate-500">Belum ada kategori. Klik "+ Kategori Baru" untuk membuat kategori pertama Anda.</div>`;
+        return;
+      }
+
+      const totalProds = Math.max(productsData.length, 1);
+
+      gridEl.innerHTML = categoriesData.map(cat => {
+        const safeCatId = sanitizeIdentifier(cat.id);
+        const safeName = escapeHtml(cat.name);
+        const safeIcon = sanitizeIdentifier(cat.icon || 'code-2');
+        const safeColor = escapeAttr(cat.color || 'bg-cyan-50 text-cyan-600');
+        const linkedProds = productsData.filter(p => p.cat_id === cat.id);
+        const count = linkedProds.length;
+        const sharePct = Math.round((count / totalProds) * 100);
+
+        return `
+          <div class="admin-card rounded-2xl p-5 flex flex-col justify-between gap-4">
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-11 h-11 rounded-2xl ${safeColor} flex items-center justify-center shadow-2xs shrink-0">
+                    <i data-lucide="${safeIcon}" class="w-5 h-5"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <h4 class="font-heading text-sm font-bold text-slate-900 truncate">${safeName}</h4>
+                    <p class="text-[11px] text-slate-400 font-mono-code truncate">icon: ${safeIcon}</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200/70 tabular-nums shrink-0">${count} Produk</span>
+              </div>
+
+              <div class="space-y-1">
+                <div class="flex justify-between text-[10px] text-slate-500">
+                  <span>Distribusi Katalog</span>
+                  <span class="font-bold text-slate-800">${sharePct}%</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div style="width: ${sharePct}%" class="h-full bg-gradient-to-r from-[#00f5d4] to-[#ff1e7a] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <button type="button" onclick="openCategoryModal('${safeCatId}')" class="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                <i data-lucide="pencil" class="w-3.5 h-3.5 text-cyan-600"></i> Edit
+              </button>
+              <button type="button" onclick="confirmDeleteCategory('${safeCatId}')" class="py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.openCategoryModal = function(editCatId = null) {
+      const idInput = document.getElementById('cat-form-id');
+      const titleEl = document.getElementById('category-modal-title');
+      const nameInput = document.getElementById('new-cat-name');
+      const iconInput = document.getElementById('new-cat-icon');
+      const colorInput = document.getElementById('new-cat-color');
+
+      if (editCatId) {
+        const cat = categoriesData.find(c => c.id === editCatId);
+        if (!cat) return;
+        titleEl.textContent = 'Edit Kategori Katalog';
+        idInput.value = cat.id;
+        nameInput.value = cat.name;
+        iconInput.value = cat.icon || 'code-2';
+        colorInput.value = cat.color || 'bg-cyan-50 text-cyan-600';
+      } else {
+        titleEl.textContent = 'Tambah Kategori Baru';
+        idInput.value = '';
+        nameInput.value = '';
+        iconInput.value = 'code-2';
+        colorInput.value = 'bg-cyan-50 text-cyan-600';
+      }
+
+      renderCategoryIconPicker();
+      openModal('admin-category-modal');
+    };
+
+    function renderCategoryIconPicker() {
+      const grid = document.getElementById('cat-icon-picker-grid');
+      const currentIcon = document.getElementById('new-cat-icon').value;
+      if (!grid) return;
+
+      grid.innerHTML = AVAILABLE_ICONS.map(ic => {
+        const isSelected = ic === currentIcon;
+        return `
+          <button type="button" onclick="selectCategoryIcon('${ic}')" class="p-2 rounded-lg flex items-center justify-center transition ${isSelected ? 'bg-cyan-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100'}">
+            <i data-lucide="${ic}" class="w-4 h-4"></i>
+          </button>
+        `;
+      }).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.selectCategoryIcon = function(iconName) {
+      document.getElementById('new-cat-icon').value = iconName;
+      renderCategoryIconPicker();
+    };
+
+    window.submitCategoryForm = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-category');
+      const editId = document.getElementById('cat-form-id').value;
+      const name = document.getElementById('new-cat-name').value.trim();
+      const icon = document.getElementById('new-cat-icon').value.trim() || 'code-2';
+      const color = document.getElementById('new-cat-color').value;
+
+      if (!name) return;
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Menyimpan...';
+
+        if (editId) {
+          if (!IS_PREVIEW && supabaseClient) {
+            const { error } = await supabaseClient
+              .from('blokkod3_categories')
+              .update({ name, icon, color })
+              .eq('id', editId);
+            if (error) throw error;
+          }
+          const idx = categoriesData.findIndex(c => c.id === editId);
+          if (idx !== -1) categoriesData[idx] = { ...categoriesData[idx], name, icon, color };
+          await logAdminActivity('Update Kategori', name, 'success');
+          showToast(`Kategori "${name}" diperbarui!`, 'success');
+        } else {
+          const newCat = { id: 'cat-' + Date.now(), name, icon, color };
+          if (!IS_PREVIEW && supabaseClient) {
+            const { error } = await supabaseClient
+              .from('blokkod3_categories')
+              .insert([newCat]);
+            if (error) throw error;
+          }
+          categoriesData.push(newCat);
+          await logAdminActivity('Tambah Kategori Baru', name, 'success');
+          showToast(`Kategori "${name}" berhasil ditambahkan!`, 'success');
+        }
+
+        closeModal('admin-category-modal');
+        renderAdminCategories();
+        renderAdminDashboard();
+        populateAdminCategoryFilter();
+      } catch (err) {
+        showToast('Gagal menyimpan kategori: ' + (err.message || 'Kesalahan database'), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Simpan Kategori';
+      }
+    };
+
+    window.confirmDeleteCategory = function(catId) {
+      const cat = categoriesData.find(c => c.id === catId);
+      if (!cat) return;
+      const linkedCount = productsData.filter(p => p.cat_id === catId).length;
+      const warningText = linkedCount > 0
+        ? `Terdapat ${linkedCount} produk pada kategori "${cat.name}". Menghapus kategori ini akan melepaskan kategori pada produk terkait.`
+        : `Apakah Anda yakin ingin menghapus kategori "${cat.name}"?`;
+
+      openConfirmModal('Hapus Kategori?', warningText, async () => {
+        if (!IS_PREVIEW && supabaseClient) {
+          const { error } = await supabaseClient
+            .from('blokkod3_categories')
+            .delete()
+            .eq('id', catId);
+          if (error) {
+            showToast('Gagal menghapus kategori: ' + error.message, 'error');
+            return;
+          }
+        }
+        categoriesData = categoriesData.filter(c => c.id !== catId);
+        productsData.forEach(p => { if (p.cat_id === catId) p.cat_id = null; });
+        renderAdminCategories();
+        renderAdminProducts();
+        renderAdminDashboard();
+        await logAdminActivity('Hapus Kategori', cat.name, 'warning');
+        showToast('Kategori berhasil dihapus.');
+      });
+    };
+
+    // =========================================================================
+    // 10. PENGATURAN TOKO & SUPABASE AUTH PASSWORD
+    // =========================================================================
+    function populateAdminSettingsForm() {
+      document.getElementById('setting-admin-email').value = currentAdminEmail || 'admin@blokkod3.id';
+      document.getElementById('setting-wa-number').value = storeSettings.wa_number || '6281234567890';
+      document.getElementById('setting-hero-badge').value = storeSettings.hero_tag || 'Learn about IT, Code & AI';
+      document.getElementById('setting-hero-sub').value = storeSettings.hero_subtitle || '';
+
+      const urlHint = document.getElementById('admin-portal-url-hint');
+      if (urlHint) urlHint.textContent = window.location.pathname;
+
+      const heroProdSelect = document.getElementById('setting-hero-product');
+      if (heroProdSelect) {
+        heroProdSelect.innerHTML = productsData.length > 0
+          ? productsData.map(p => `<option value="${sanitizeIdentifier(p.id)}">${escapeHtml(p.title)} (${escapeHtml(p.price)})</option>`).join('')
+          : `<option value="">-- Belum Ada Produk --</option>`;
+        heroProdSelect.value = storeSettings.featured_prod_id || (productsData[0]?.id || '');
+      }
+    }
+
+    window.submitStoreSettings = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-save-store-settings');
+      const updated = {
+        id: 1,
+        wa_number: document.getElementById('setting-wa-number').value.trim(),
+        featured_prod_id: document.getElementById('setting-hero-product').value || null,
+        hero_tag: document.getElementById('setting-hero-badge').value.trim(),
+        hero_subtitle: document.getElementById('setting-hero-sub').value.trim(),
+        hero_title: storeSettings.hero_title || 'Belajar, Berkarya, Lebih Mudah dengan'
+      };
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Menyimpan...';
+
+        if (!IS_PREVIEW && supabaseClient) {
+          const { error } = await supabaseClient
+            .from('blokkod3_store_settings')
+            .upsert(updated, { onConflict: 'id' });
+          if (error) throw error;
+        }
+
+        storeSettings = { ...storeSettings, ...updated };
+        await logAdminActivity('Update Pengaturan Toko', 'Hero Banner & Kontak WhatsApp CS', 'success');
+        showToast('Konfigurasi toko publik berhasil disimpan ke database!', 'success');
+      } catch (err) {
+        showToast('Gagal menyimpan konfigurasi: ' + (err.message || 'Kesalahan database'), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Simpan Konfigurasi Toko';
+        if (window.lucide) lucide.createIcons();
+      }
+    };
+
+    window.togglePasswordVisibility = function(inputId) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      el.type = el.type === 'password' ? 'text' : 'password';
+    };
+
+    window.submitAdminPasswordUpdate = async function(e) {
+      e.preventDefault();
+      const newPass = document.getElementById('setting-admin-pass').value;
+      const confirmPass = document.getElementById('setting-admin-pass-confirm').value;
+
+      if (newPass !== confirmPass) {
+        showToast('Konfirmasi password tidak cocok!', 'error');
+        return;
+      }
+
+      if (IS_PREVIEW) {
+        document.getElementById('setting-admin-pass').value = '';
+        document.getElementById('setting-admin-pass-confirm').value = '';
+        showToast('Simulasi ganti password berhasil (Mode Preview).', 'success');
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password: newPass });
+        if (error) throw error;
+
+        document.getElementById('setting-admin-pass').value = '';
+        document.getElementById('setting-admin-pass-confirm').value = '';
+        await logAdminActivity('Update Password Admin', currentAdminEmail, 'success');
+        showToast('Password Supabase Auth berhasil diperbarui!', 'success');
+      } catch (err) {
+        showToast('Gagal memperbarui password: ' + (err.message || 'Coba login ulang terlebih dahulu'), 'error');
+      }
+    };
+
+    window.exportDatabaseJSON = function() {
+      const backupPayload = {
+        exportedAt: new Date().toISOString(),
+        storeSettings,
+        categoriesData,
+        productsData,
+        dailyViewersData
+      };
+      const blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `blokkod3-supabase-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('File backup JSON berhasil diunduh!', 'success');
+    };
+
+    // =========================================================================
+    // 11. INISIALISASI SAAT HALAMAN ADMIN DIMUAT
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!IS_PREVIEW && supabaseClient) {
+        try {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session && session.user) {
+            await enterAdminWorkspace(session.user.email);
+            if (window.lucide) lucide.createIcons();
+            return;
+          }
+        } catch (err) {}
+      }
+
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
