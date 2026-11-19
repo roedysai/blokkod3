@@ -21,6 +21,12 @@
       font-family: 'Inter', sans-serif;
       background-color: #f8fafc;
       -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    input, textarea, select, [contenteditable="true"] {
+      -webkit-user-select: text;
+      user-select: text;
     }
     h1, h2, h3, h4, .font-heading {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -168,11 +174,18 @@
       <div class="p-5 space-y-6 overflow-y-auto">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
-              <svg viewBox="0 0 200 200" class="w-full h-full rounded-full" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-10 h-10 rounded-full shadow-sm flex items-center justify-center shrink-0 overflow-hidden select-none">
+              <svg viewBox="0 0 200 200" class="w-full h-full rounded-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="blokkod3-sidebar-grad" x1="15%" y1="50%" x2="85%" y2="50%">
+                    <stop offset="0%" stop-color="#00F5D4" />
+                    <stop offset="48%" stop-color="#7CE8E6" />
+                    <stop offset="100%" stop-color="#FF1E7A" />
+                  </linearGradient>
+                </defs>
                 <circle cx="100" cy="100" r="98" fill="#0B1111" />
-                <text x="100" y="92" text-anchor="middle" fill="#00F5D4" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">blok</text>
-                <text x="100" y="142" text-anchor="middle" fill="#FF1E7A" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">kod3</text>
+                <text x="100" y="92" text-anchor="middle" fill="url(#blokkod3-sidebar-grad)" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">blok</text>
+                <text x="100" y="142" text-anchor="middle" fill="url(#blokkod3-sidebar-grad)" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">kod3</text>
               </svg>
             </div>
             <div>
@@ -2382,7 +2395,45 @@
     // =========================================================================
     // 11. INISIALISASI SAAT HALAMAN ADMIN DIMUAT
     // =========================================================================
+    // 11. PROTEKSI ANTI-KLIK KANAN & ANTI-VIEW SOURCE ADMIN
+    // =========================================================================
+    function initAdminClientProtection() {
+      // Blokir klik kanan pada area UI (tetap aman untuk input via Ctrl+C / Ctrl+V)
+      document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        showToast('Klik kanan dinonaktifkan untuk keamanan panel admin.', 'info');
+      });
+
+      // Blokir drag elemen UI (tetap izinkan drag & drop file gambar di upload-dropzone)
+      document.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+      });
+
+      // Blokir pintasan View Source & DevTools tanpa mengganggu copy-paste di input/editor
+      document.addEventListener('keydown', (e) => {
+        const key = (e.key || '').toLowerCase();
+        const isDevToolsShortcut =
+          e.key === 'F12' ||
+          e.keyCode === 123 ||
+          ((e.ctrlKey || e.metaKey) && key === 'u') ||
+          ((e.ctrlKey || e.metaKey) && key === 's') ||
+          ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c', 'k'].includes(key)) ||
+          (e.metaKey && e.altKey && ['u', 'i', 'j', 'c'].includes(key));
+
+        if (isDevToolsShortcut) {
+          e.preventDefault();
+          e.stopPropagation();
+          showToast('Pintasan inspeksi kode dibatasi.', 'info');
+          return false;
+        }
+      }, true);
+    }
+
+    // =========================================================================
+    // 12. INISIALISASI SAAT HALAMAN ADMIN DIMUAT
+    // =========================================================================
     document.addEventListener('DOMContentLoaded', async () => {
+      initAdminClientProtection();
       if (!IS_PREVIEW && supabaseClient) {
         try {
           const { data: { session } } = await supabaseClient.auth.getSession();
