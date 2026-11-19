@@ -144,13 +144,20 @@
     <!-- NAVBAR UTAMA (VIEWER) -->
     <nav id="viewer-navbar" class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        <!-- Logo & Brand -->
+        <!-- Logo & Brand (Jangan diubah — sesuai desain resmi blokkod3) -->
         <div class="flex items-center gap-3 select-none">
-          <div id="brand-logo-trigger" onclick="switchView('home')" title="blokkod3" class="w-10 h-10 rounded-full p-0.5 bg-gradient-to-tr from-[#00f5d4] to-[#ff1e7a] shadow-md flex items-center justify-center shrink-0 cursor-pointer active:scale-90 transition relative group">
+          <div id="brand-logo-trigger" onclick="switchView('home')" onpointerdown="startLogoHold(event)" onpointerup="cancelLogoHold()" onpointerleave="cancelLogoHold()" onpointercancel="cancelLogoHold()" title="blokkod3" class="w-10 h-10 rounded-full shadow-md flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition relative overflow-hidden">
             <svg viewBox="0 0 200 200" class="w-full h-full rounded-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="blokkod3-brand-grad" x1="15%" y1="50%" x2="85%" y2="50%">
+                  <stop offset="0%" stop-color="#00F5D4" />
+                  <stop offset="48%" stop-color="#7CE8E6" />
+                  <stop offset="100%" stop-color="#FF1E7A" />
+                </linearGradient>
+              </defs>
               <circle cx="100" cy="100" r="98" fill="#0B1111" />
-              <text x="100" y="92" text-anchor="middle" fill="#00F5D4" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" font-size="47">blok</text>
-              <text x="100" y="140" text-anchor="middle" fill="#FF1E7A" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" font-size="47">kod3</text>
+              <text x="100" y="92" text-anchor="middle" fill="url(#blokkod3-brand-grad)" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">blok</text>
+              <text x="100" y="142" text-anchor="middle" fill="url(#blokkod3-brand-grad)" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-style="italic" letter-spacing="-1.5" font-size="50">kod3</text>
             </svg>
           </div>
           <div onclick="switchView('home')" class="cursor-pointer">
@@ -643,7 +650,7 @@
     // =========================================================================
     let isAdminLoggedIn = false;
     let currentAdminEmail = '';
-    const activePressedKeys = new Set();
+    let logoHoldTimer = null;
     let currentSelectedProduct = null;
     let activeCatalogCategoryFilter = 'all';
     let currentChartMode = 'both';
@@ -670,44 +677,33 @@
     let activityLogs = [];
 
     // =========================================================================
-    // 4. BACKEND DATA SYNCHRONIZATION & ANALYTICS ENGINE
+    // 4. BACKEND DATA ENGINE (PREVIEW vs SUPABASE REAL-TIME)
     // =========================================================================
-    function buildLast7DaysScaffold(existingRows = []) {
-      const mapByDate = new Map();
-      (existingRows || []).forEach(r => mapByDate.set(r.date_key, r));
-
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-      const result = [];
+    function buildEmpty7DaysAnalytics() {
+      const days = [];
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const dd = String(d.getDate()).padStart(2, '0');
-        const dateKey = `${yyyy}-${mm}-${dd}`;
-        const label = i === 0 ? 'Hari Ini' : `${d.getDate()} ${months[d.getMonth()]}`;
-
-        const found = mapByDate.get(dateKey);
-        if (found) {
-          result.push({ date_key: dateKey, label: found.label || label, views: found.views || 0, clicks: found.clicks || 0 });
-        } else if (IS_PREVIEW) {
-          const mockViews = 65 + ((6 - i) * 14);
-          const mockClicks = 12 + ((6 - i) * 3);
-          result.push({ date_key: dateKey, label, views: mockViews, clicks: mockClicks });
-        } else {
-          result.push({ date_key: dateKey, label, views: 0, clicks: 0 });
-        }
+        const dateKey = d.toISOString().slice(0, 10);
+        const label = i === 0
+          ? 'Hari Ini'
+          : d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+        days.push({ date_key: dateKey, label, views: 0, clicks: 0 });
       }
-      return result;
+      return days;
     }
 
     async function loadAllDataFromBackend() {
       if (IS_PREVIEW || !supabaseClient) {
         categoriesData = JSON.parse(JSON.stringify(PREVIEW_CATEGORIES));
         productsData = JSON.parse(JSON.stringify(PREVIEW_PRODUCTS));
-        dailyViewersData = buildLast7DaysScaffold();
+        dailyViewersData = buildEmpty7DaysAnalytics().map((d, idx) => ({
+          ...d,
+          views: 15 + idx * 4,
+          clicks: 3 + idx
+        }));
         activityLogs = [
-          { time: 'Baru saja', text: 'Mode Preview Aktif — Data lokal berhasil dimuat', type: 'info' }
+          { time: 'Baru saja', text: 'Aplikasi siap digunakan', type: 'info' }
         ];
         return;
       }
@@ -717,51 +713,57 @@
           supabaseClient.from('blokkod3_categories').select('*').order('created_at', { ascending: true }),
           supabaseClient.from('blokkod3_products').select('*').order('created_at', { ascending: false }),
           supabaseClient.from('blokkod3_store_settings').select('*').eq('id', 1).maybeSingle(),
-          supabaseClient.from('blokkod3_analytics').select('*').order('date_key', { ascending: true }).limit(14),
+          supabaseClient.from('blokkod3_analytics').select('*').order('date_key', { ascending: true }).limit(7),
           supabaseClient.from('blokkod3_activity_logs').select('*').order('created_at', { ascending: false }).limit(20)
         ]);
 
-        if (!catRes.error && Array.isArray(catRes.data)) categoriesData = catRes.data;
-        if (!prodRes.error && Array.isArray(prodRes.data)) productsData = prodRes.data;
-        if (!setRes.error && setRes.data) storeSettings = { ...storeSettings, ...setRes.data };
-        dailyViewersData = buildLast7DaysScaffold(!anaRes.error ? anaRes.data : []);
-
-        if (!logRes.error && Array.isArray(logRes.data)) {
-          activityLogs = logRes.data.map(l => ({
-            time: new Date(l.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-            text: `${l.action}${l.detail ? ': ' + l.detail : ''}`,
-            type: 'info'
-          }));
+        categoriesData = catRes.data || [];
+        productsData = prodRes.data || [];
+        if (setRes.data) {
+          storeSettings = { ...storeSettings, ...setRes.data };
         }
+
+        const base7Days = buildEmpty7DaysAnalytics();
+        const dbAnalyticsMap = new Map((anaRes.data || []).map(item => [item.date_key, item]));
+        dailyViewersData = base7Days.map(day => {
+          const found = dbAnalyticsMap.get(day.date_key);
+          return found ? { ...day, views: found.views || 0, clicks: found.clicks || 0 } : day;
+        });
+
+        activityLogs = (logRes.data || []).map(l => ({
+          time: new Date(l.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+          text: l.detail ? `${l.action}: ${l.detail}` : l.action,
+          type: 'info'
+        }));
       } catch (err) {
         console.error('Supabase fetch error:', err);
-        showToast('Gagal memuat sebagian data dari Supabase.', 'error');
+        showToast('Gagal memuat data dari Supabase: ' + (err.message || 'Periksa konfigurasi URL/Key'), 'error');
       }
     }
 
-    window.refreshAllFromBackend = async function(notify = false) {
+    window.refreshAllFromBackend = async function() {
       await loadAllDataFromBackend();
       renderAllPublicViews();
       if (isAdminLoggedIn) {
         renderAdminDashboard();
         renderAdminProducts();
         renderAdminCategories();
-        populateAdminSettingsForm();
       }
-      if (notify) showToast('Data berhasil disinkronkan ulang!', 'success');
+      showToast('Data berhasil disinkronkan!', 'success');
     };
 
     async function trackDailyVisit() {
-      const todayRow = dailyViewersData[dailyViewersData.length - 1];
-      if (!todayRow) return;
-
-      todayRow.views = (todayRow.views || 0) + 1;
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const todayItem = dailyViewersData[dailyViewersData.length - 1];
+      if (todayItem) {
+        todayItem.views = (todayItem.views || 0) + 1;
+      }
 
       if (!IS_PREVIEW && supabaseClient) {
         try {
           await supabaseClient.rpc('increment_daily_analytics', {
-            p_date_key: todayRow.date_key,
-            p_label: todayRow.label,
+            p_date_key: todayKey,
+            p_label: 'Hari Ini',
             p_view_inc: 1,
             p_click_inc: 0
           });
@@ -775,43 +777,29 @@
       if (prod) {
         prod.clicks = (prod.clicks || 0) + 1;
       }
-
-      const todayRow = dailyViewersData[dailyViewersData.length - 1];
-      if (todayRow) {
-        todayRow.clicks = (todayRow.clicks || 0) + 1;
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const todayItem = dailyViewersData[dailyViewersData.length - 1];
+      if (todayItem) {
+        todayItem.clicks = (todayItem.clicks || 0) + 1;
       }
 
       if (!IS_PREVIEW && supabaseClient) {
         try {
           await Promise.all([
-            supabaseClient.rpc('increment_product_metric', {
-              p_prod_id: prodId,
-              p_view_inc: 0,
-              p_click_inc: 1
-            }),
-            todayRow
-              ? supabaseClient.rpc('increment_daily_analytics', {
-                  p_date_key: todayRow.date_key,
-                  p_label: todayRow.label,
-                  p_view_inc: 0,
-                  p_click_inc: 1
-                })
-              : Promise.resolve()
+            supabaseClient.rpc('increment_product_metric', { p_prod_id: prodId, p_view_inc: 0, p_click_inc: 1 }),
+            supabaseClient.rpc('increment_daily_analytics', { p_date_key: todayKey, p_label: 'Hari Ini', p_view_inc: 0, p_click_inc: 1 })
           ]);
         } catch (err) {}
       }
 
-      if (isAdminLoggedIn) {
-        renderAdminDashboard();
-        renderAdminProducts();
-      }
+      if (isAdminLoggedIn) renderAdminDashboard();
     };
 
     async function logAdminActivity(action, detail = '', type = 'info') {
-      const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const nowStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
       activityLogs.unshift({
-        time: timeStr,
-        text: `${action}${detail ? ': ' + detail : ''}`,
+        time: nowStr,
+        text: detail ? `${action}: ${detail}` : action,
         type
       });
       if (activityLogs.length > 25) activityLogs.pop();
@@ -825,7 +813,7 @@
     }
 
     // =========================================================================
-    // 5. SECRET TRIGGER (CTRL + CAPS LOCK + P) & SUPABASE AUTH
+    // 5. SECRET TRIGGER (CTRL+ALT+A / ALT+SHIFT+A / LONG-PRESS LOGO / ?admin=1)
     // =========================================================================
     function triggerAdminLoginModal() {
       if (isAdminLoggedIn) {
@@ -840,27 +828,32 @@
       setTimeout(() => { if (emailInput) emailInput.focus(); }, 100);
     }
 
-    // Kombinasi Pintasan Rahasia: CTRL + CAPS LOCK + P
-    document.addEventListener('keydown', (e) => {
-      if (e.code) activePressedKeys.add(e.code);
-      const isCtrl = e.ctrlKey;
-      const isCapsLock = (typeof e.getModifierState === 'function' && e.getModifierState('CapsLock')) || activePressedKeys.has('CapsLock');
-      const isKeyP = e.code === 'KeyP' || (e.key && e.key.toLowerCase() === 'p');
+    // Long-Press 2 detik pada Logo (berfungsi di HP & Desktop)
+    window.startLogoHold = function(e) {
+      if (e && e.button !== undefined && e.button !== 0) return;
+      clearTimeout(logoHoldTimer);
+      logoHoldTimer = setTimeout(() => {
+        triggerAdminLoginModal();
+      }, 2000);
+    };
 
-      if (isCtrl && isCapsLock && isKeyP) {
+    window.cancelLogoHold = function() {
+      clearTimeout(logoHoldTimer);
+    };
+
+    // Kombinasi Pintasan Keyboard Andal: CTRL + ALT + A  atau  ALT + SHIFT + A
+    document.addEventListener('keydown', (e) => {
+      const key = (e.key || '').toLowerCase();
+      const isKeyA = e.code === 'KeyA' || key === 'a';
+      const isCtrlAltA = e.ctrlKey && e.altKey && !e.shiftKey && isKeyA;
+      const isAltShiftA = e.altKey && e.shiftKey && !e.ctrlKey && isKeyA;
+
+      if (isCtrlAltA || isAltShiftA) {
         e.preventDefault();
         e.stopPropagation();
         triggerAdminLoginModal();
       }
-    });
-
-    document.addEventListener('keyup', (e) => {
-      if (e.code) activePressedKeys.delete(e.code);
-    });
-
-    window.addEventListener('blur', () => {
-      activePressedKeys.clear();
-    });
+    }, true);
 
     window.submitAdminLogin = async function(e) {
       e.preventDefault();
@@ -2444,6 +2437,12 @@
             document.getElementById('admin-preview-bar').classList.remove('hidden');
           }
         } catch (err) {}
+      }
+
+      // Buka otomatis modal login admin jika URL memiliki parameter ?admin=1 atau #admin
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('admin') === '1' || window.location.hash === '#admin') {
+        triggerAdminLoginModal();
       }
 
       if (window.lucide) lucide.createIcons();
