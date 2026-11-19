@@ -921,13 +921,258 @@
   </div>
 
   <!-- ========================================================================= -->
+  <!-- =================== MODAL DIALOGS (LOGIN, CRUD, CONFIRM) ================ -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. MODAL: LOGIN ADMIN (KLIK 20X LOGO BLOKKOD3) -->
+  <div id="admin-login-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-200 text-slate-800">
+      <div class="px-6 py-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-700">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading text-sm font-bold text-slate-900">Login Administrator</h3>
+            <p class="text-[10px] text-slate-500">Portal Manajemen blokkod3</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeModal('admin-login-modal')" class="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <form onsubmit="submitAdminLogin(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Administrator</label>
+          <input type="email" id="admin-email-input" required placeholder="admin@blokkod3.id" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
+          <input type="password" id="admin-password-input" required placeholder="Masukkan password Supabase Auth" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+        </div>
+        <button type="submit" id="btn-admin-login-submit" class="w-full py-3 brand-btn-primary text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <span>Masuk Command Center</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MODAL: TAMBAH / EDIT PRODUK (UPLOAD GAMBAR + RICH TEXT + LIVE PREVIEW) -->
+  <div id="admin-product-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 text-slate-800 w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-700 flex items-center justify-center">
+            <i data-lucide="package-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 id="product-modal-title" class="font-heading text-sm sm:text-base font-bold text-slate-900">Tambah Produk Digital Baru</h3>
+            <p class="text-[11px] text-slate-500">Upload cover gambar, deskripsi berformat, &amp; Live Card Preview</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeModal('admin-product-modal')" class="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <form onsubmit="submitProductForm(event)" class="p-5 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <input type="hidden" id="prod-form-id" value="" />
+
+        <!-- Kolom Form (7 Cols) -->
+        <div class="lg:col-span-7 space-y-3.5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Produk</label>
+              <select id="upload-cat" oninput="updateProductLivePreview()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500"></select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Label Badge Promo</label>
+              <select id="upload-badge" oninput="updateProductLivePreview()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500">
+                <option value="Best Seller">Best Seller</option>
+                <option value="Hot">Hot</option>
+                <option value="Populer">Populer</option>
+                <option value="Baru">Baru</option>
+                <option value="Limited">Limited</option>
+                <option value="">Tanpa Badge</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama / Judul Produk Digital</label>
+            <input type="text" id="upload-title" required oninput="updateProductLivePreview()" placeholder="Contoh: Full-Stack Next.js AI SaaS Boilerplate" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Harga Jual (Aktif)</label>
+              <input type="text" id="upload-price" required oninput="updateProductLivePreview()" value="Rp 79.000" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Harga Coret (Normal)</label>
+              <input type="text" id="upload-orig-price" oninput="updateProductLivePreview()" value="Rp 159.000" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Rating Bintang</label>
+              <input type="text" id="upload-rating" oninput="updateProductLivePreview()" value="4.9" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Label Ulasan / Terjual</label>
+              <input type="text" id="upload-reviews" oninput="updateProductLivePreview()" value="320+ ulasan" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <!-- Upload Gambar Cover Produk -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-slate-700">Gambar Cover Produk</label>
+              <button type="button" onclick="resetProductImageInput()" class="text-[11px] font-semibold text-rose-600 hover:underline">Hapus Gambar</button>
+            </div>
+
+            <div id="upload-dropzone"
+              onclick="document.getElementById('upload-img-file').click()"
+              ondragover="handleImageDragOver(event)"
+              ondragleave="handleImageDragLeave(event)"
+              ondrop="handleImageDrop(event)"
+              class="border-2 border-dashed border-slate-300 hover:border-cyan-500 bg-slate-50 hover:bg-cyan-50/40 rounded-2xl p-3.5 text-center cursor-pointer transition group">
+              <input type="file" id="upload-img-file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="handleProductImageFileSelect(event)" class="hidden" />
+              <div id="upload-file-status" class="flex flex-col items-center justify-center gap-1">
+                <div class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-cyan-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+                  <i data-lucide="image-plus" class="w-4 h-4"></i>
+                </div>
+                <p class="text-xs font-bold text-slate-700">Klik untuk Upload Gambar atau Tarik File ke Sini</p>
+                <p class="text-[10px] text-slate-400">Mendukung JPG, PNG, WEBP (Maks. 5MB) — Tersimpan ke Supabase Storage</p>
+              </div>
+            </div>
+
+            <div class="relative">
+              <i data-lucide="globe" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="url" id="upload-img" oninput="clearSelectedImageFile(); updateProductLivePreview();" placeholder="Atau tempel URL gambar eksternal (https://...)" class="w-full pl-8 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Link Checkout Lynk.id <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <i data-lucide="link" class="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="url" id="upload-lynk" required placeholder="https://lynk.id/blokkod3/produk-digital" class="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-cyan-700 font-medium focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <!-- Rich Text Editor Deskripsi (Support Copy-Paste Sesuai Format) -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-slate-700">Deskripsi Lengkap Produk <span class="text-[10px] font-normal text-slate-400">(Support Copy-Paste Berformat)</span></label>
+              <div class="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-lg p-0.5">
+                <button type="button" onclick="execDescFormat('bold')" title="Tebal (Bold)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="bold" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="execDescFormat('italic')" title="Miring (Italic)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="italic" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="execDescFormat('insertUnorderedList')" title="Daftar Poin (Bullet List)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="execDescFormat('insertOrderedList')" title="Daftar Bernomor (Numbered List)" class="p-1 rounded hover:bg-white text-slate-700 transition"><i data-lucide="list-ordered" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+            <div id="upload-desc-editor"
+              contenteditable="true"
+              onpaste="handleRichDescPaste(event)"
+              oninput="syncDescToHiddenInput()"
+              data-placeholder="Ketik atau paste deskripsi dari Word / Docs / Notion di sini (format paragraf, bold, & list otomatis terjaga)..."
+              class="rich-editor-content w-full min-h-[100px] max-h-44 overflow-y-auto px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 leading-relaxed focus:outline-none focus:bg-white focus:border-cyan-500"></div>
+            <textarea id="upload-desc" class="hidden"></textarea>
+          </div>
+
+          <label class="flex items-center gap-2.5 pt-1 cursor-pointer select-none">
+            <input type="checkbox" id="upload-featured" checked class="w-4 h-4 rounded accent-cyan-600" />
+            <span class="text-xs font-semibold text-slate-700">Tampilkan di Daftar Produk Unggulan (Beranda)</span>
+          </label>
+        </div>
+
+        <!-- Kolom Live Preview (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col justify-between bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-cyan-700 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span> Live Card Preview
+              </span>
+              <span class="text-[10px] text-slate-500">Tampilan Pembeli</span>
+            </div>
+            <div id="modal-live-card-preview" class="text-slate-800 max-w-xs mx-auto w-full"></div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+            <button type="button" onclick="closeModal('admin-product-modal')" class="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-600 transition">Batal</button>
+            <button type="submit" id="btn-submit-product" class="px-5 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+              <i data-lucide="check" class="w-4 h-4"></i> Simpan Produk
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. MODAL: TAMBAH / EDIT KATEGORI -->
+  <div id="admin-category-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 text-slate-800 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <h3 id="category-modal-title" class="font-heading text-sm font-bold text-slate-900">Tambah Kategori Katalog</h3>
+        <button type="button" onclick="closeModal('admin-category-modal')" class="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <form onsubmit="submitCategoryForm(event)" class="p-6 space-y-4">
+        <input type="hidden" id="cat-form-id" value="" />
+        
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Kategori</label>
+          <input type="text" id="new-cat-name" required placeholder="Contoh: Cloud & DevOps" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Ikon Visual (Lucide Icon)</label>
+          <input type="text" id="new-cat-icon" value="code-2" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-cyan-700 font-medium mb-2 font-mono-code" />
+          <div id="cat-icon-picker-grid" class="grid grid-cols-6 gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200"></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Tema Warna Kartu Kategori</label>
+          <select id="new-cat-color" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900">
+            <option value="bg-cyan-50 text-cyan-600">Cyan Tech (Default)</option>
+            <option value="bg-pink-50 text-pink-600">Neon Pink AI</option>
+            <option value="bg-indigo-50 text-indigo-600">Indigo Modern</option>
+            <option value="bg-emerald-50 text-emerald-600">Emerald Code</option>
+            <option value="bg-amber-50 text-amber-600">Amber Gold</option>
+            <option value="bg-violet-50 text-violet-600">Violet Cyber</option>
+          </select>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('admin-category-modal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-600">Batal</button>
+          <button type="submit" id="btn-submit-category" class="px-5 py-2 brand-btn-primary rounded-xl text-xs font-bold shadow-sm">Simpan Kategori</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. MODAL: KONFIRMASI TINDAKAN -->
+  <div id="confirm-action-modal" class="hidden fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 text-slate-800 w-full max-w-sm rounded-3xl shadow-2xl p-6 space-y-4 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 id="confirm-modal-title" class="font-heading text-base font-bold text-slate-900">Konfirmasi Hapus</h3>
+        <p id="confirm-modal-desc" class="text-xs text-slate-500 leading-relaxed">Apakah Anda yakin ingin menghapus data ini?</p>
+      </div>
+      <div class="flex items-center justify-center gap-2.5 pt-2">
+        <button type="button" onclick="closeModal('confirm-action-modal')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">Batal</button>
+        <button type="button" id="confirm-modal-yes-btn" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-bold text-white shadow-sm transition">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
   <!-- ================= JAVASCRIPT ENGINE & SUPABASE INTEGRATION ============== -->
   <!-- ========================================================================= -->
   <script>
     // =========================================================================
     // 1. SAKLAR DEPLOYMENT & KONFIGURASI SUPABASE
     // =========================================================================
-  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY ke GitHub Pages agar terhubung 100% ke Supabase
+const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY ke GitHub Pages agar terhubung 100% ke Supabase
     const SUPABASE_URL = "https://eruxyvrnjjvyzjhnhpkp.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_h698oZ6stynKa0wiAIg9BA_JmD5HuXD";
     const SUPABASE_STORAGE_BUCKET = "blokkod3-products"; // Bucket Supabase Storage untuk upload gambar produk
