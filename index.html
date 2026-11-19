@@ -144,9 +144,9 @@
     <!-- NAVBAR UTAMA (VIEWER) -->
     <nav id="viewer-navbar" class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        <!-- Logo & Brand (Jangan diubah — sesuai desain resmi blokkod3) -->
+        <!-- Logo & Brand (Jangan diubah — klik 20x untuk membuka Admin Login) -->
         <div class="flex items-center gap-3 select-none">
-          <div id="brand-logo-trigger" onclick="switchView('home')" onpointerdown="startLogoHold(event)" onpointerup="cancelLogoHold()" onpointerleave="cancelLogoHold()" onpointercancel="cancelLogoHold()" title="blokkod3" class="w-10 h-10 rounded-full shadow-md flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition relative overflow-hidden">
+          <div id="brand-logo-trigger" onclick="handleLogoTap(event)" title="blokkod3" class="w-10 h-10 rounded-full shadow-md flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition relative overflow-hidden">
             <svg viewBox="0 0 200 200" class="w-full h-full rounded-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="blokkod3-brand-grad" x1="15%" y1="50%" x2="85%" y2="50%">
@@ -437,6 +437,538 @@
               <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-heading font-black text-white text-sm">b3</div>
             </div>
             <div>
+              <div class="flex items-center gap-1.5">
+                <h4 class="font-heading text-sm font-extrabold text-slate-900 tracking-tight">blokkod3</h4>
+                <span class="px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider bg-cyan-50 text-cyan-700 rounded border border-cyan-200">PRO</span>
+              </div>
+              <p class="text-[11px] text-slate-500">Admin Command Center</p>
+            </div>
+          </div>
+          <button onclick="toggleAdminMobileSidebar(false)" class="lg:hidden p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-900">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <button onclick="openProductModal()" class="w-full py-2.5 px-3.5 brand-btn-primary rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah Produk Baru
+        </button>
+
+        <div class="space-y-1">
+          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Menu Utama</p>
+          
+          <button onclick="switchAdminTab('dashboard')" id="adm-tab-dashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-cyan-50 text-cyan-700 border-l-4 border-cyan-500 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview & Analitik</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+          </button>
+
+          <button onclick="switchAdminTab('products')" id="adm-tab-products" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-xs font-semibold transition">
+            <span class="flex items-center gap-3"><i data-lucide="package" class="w-4 h-4"></i> Produk & Lynk.id</span>
+            <span id="sidebar-prod-badge" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-600 tabular-nums">0</span>
+          </button>
+
+          <button onclick="switchAdminTab('categories')" id="adm-tab-categories" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-xs font-semibold transition">
+            <span class="flex items-center gap-3"><i data-lucide="folders" class="w-4 h-4"></i> Kategori Katalog</span>
+            <span id="sidebar-cat-badge" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-600 tabular-nums">0</span>
+          </button>
+
+          <button onclick="switchAdminTab('settings')" id="adm-tab-settings" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-xs font-semibold transition">
+            <span class="flex items-center gap-3"><i data-lucide="sliders" class="w-4 h-4"></i> Pengaturan & Backup</span>
+          </button>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-500 font-medium">Mode Database</span>
+            <span id="db-status-badge" class="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="database" class="w-3 h-3"></i> Supabase</span>
+          </div>
+          <p id="db-status-desc" class="text-[10px] text-slate-500 leading-relaxed">Terhubung langsung ke tabel PostgreSQL Supabase.</p>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-200 bg-slate-50/70">
+        <div class="flex items-center justify-between px-2 py-1">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-full bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-700 font-bold text-xs shrink-0">
+              <i data-lucide="shield" class="w-4 h-4"></i>
+            </div>
+            <div class="min-w-0">
+              <p id="sidebar-admin-username" class="text-xs font-bold text-slate-900 truncate">admin@blokkod3.id</p>
+              <p class="text-[10px] text-emerald-600 font-medium mt-0.5">Supabase Auth</p>
+            </div>
+          </div>
+          <button onclick="logoutAdmin()" title="Logout Admin" class="p-2 rounded-xl text-rose-600 hover:bg-rose-50 transition shrink-0">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- KONTEN UTAMA ADMIN -->
+    <div class="flex-1 flex flex-col min-w-0">
+      
+      <!-- TOP COMMAND HEADER BAR -->
+      <header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between gap-4 sticky top-0 z-30">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleAdminMobileSidebar(true)" class="lg:hidden p-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900">
+            <i data-lucide="menu" class="w-4 h-4"></i>
+          </button>
+          <div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+              <span>Admin Panel</span>
+              <i data-lucide="chevron-right" class="w-3 h-3"></i>
+              <span id="admin-breadcrumb-current" class="text-cyan-700 font-semibold">Overview & Analitik</span>
+            </div>
+            <h1 id="admin-page-title" class="font-heading text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Executive Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <div class="relative hidden md:block w-60">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="admin-global-search" oninput="handleAdminGlobalSearch(this.value)" placeholder="Cari produk di tabel..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-cyan-500 transition" />
+          </div>
+
+          <button onclick="refreshAllFromBackend()" title="Sinkronisasi Ulang Data" class="p-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-xs font-semibold transition">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          </button>
+
+          <button onclick="previewStoreFromAdmin()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition flex items-center gap-2 shadow-2xs">
+            <i data-lucide="eye" class="w-3.5 h-3.5 text-cyan-600"></i>
+            <span class="hidden sm:inline">Preview Toko Live</span>
+          </button>
+
+          <button onclick="openCategoryModal()" class="hidden sm:flex px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition items-center gap-1.5 shadow-2xs">
+            <i data-lucide="folder-plus" class="w-3.5 h-3.5 text-pink-600"></i>
+            <span>+ Kategori</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- MAIN WORKSPACE CONTAINER -->
+      <main class="flex-1 p-4 sm:p-8 space-y-6 max-w-7xl w-full mx-auto">
+
+        <!-- TAB 1: DASHBOARD & ANALYTICS -->
+        <div id="adm-view-dashboard" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Pengunjung Hari Ini</p>
+                  <h3 id="admin-today-viewer-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-cyan-50 border border-cyan-200/70 flex items-center justify-center text-cyan-600">
+                  <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> Live
+                </span>
+                <span id="admin-total-7d-viewers" class="text-slate-500 tabular-nums">Total 7 hr: 0</span>
+              </div>
+            </div>
+
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Klik Checkout Lynk.id</p>
+                  <h3 id="admin-total-clicks-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-cyan-600 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-pink-50 border border-pink-200/70 flex items-center justify-center text-pink-600">
+                  <i data-lucide="mouse-pointer-click" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span id="admin-conversion-rate" class="px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-700 font-bold">CTR: 0%</span>
+                <span class="text-slate-500">Tercatat Real-Time</span>
+              </div>
+            </div>
+
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Produk Digital Aktif</p>
+                  <h3 id="admin-total-prod-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200/70 flex items-center justify-center text-indigo-600">
+                  <i data-lucide="package-check" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span id="admin-featured-prod-count" class="text-indigo-600 font-semibold">0 Produk Unggulan</span>
+                <button onclick="switchAdminTab('products')" class="text-cyan-700 hover:underline font-bold">Kelola &rarr;</button>
+              </div>
+            </div>
+
+            <div class="admin-card rounded-2xl p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Total Kategori</p>
+                  <h3 id="admin-total-cat-count" class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tabular-nums">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center text-emerald-600">
+                  <i data-lucide="layers" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[11px]">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold">Katalog Aktif</span>
+                <button onclick="switchAdminTab('categories')" class="text-cyan-700 hover:underline font-bold">Lihat &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- GRAFIK INTERAKTIF 7 HARI TERAKHIR -->
+          <div class="admin-card rounded-2xl p-5 sm:p-6 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-heading text-base font-bold text-slate-900">Analitik Trafik & Konversi Lynk.id (7 Hari Terakhir)</h3>
+                  <span class="px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 text-[10px] font-bold border border-cyan-200">Real-time</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">Perbandingan jumlah pengunjung katalog dengan klik tombol pembelian Lynk.id</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 text-[11px] font-semibold">
+                  <button onclick="setChartMode('both')" id="chart-btn-both" class="px-2.5 py-1 rounded-lg bg-white text-cyan-700 font-bold shadow-2xs border border-slate-200 transition">Semua</button>
+                  <button onclick="setChartMode('views')" id="chart-btn-views" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">Views</button>
+                  <button onclick="setChartMode('clicks')" id="chart-btn-clicks" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">Klik Lynk</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="admin-daily-viewers-chart" class="grid grid-cols-7 gap-2 sm:gap-4 items-end h-52 pt-8 pb-2 px-3 sm:px-6 bg-slate-50 rounded-2xl border border-slate-200/80 relative"></div>
+
+            <div class="flex flex-wrap items-center justify-between gap-4 text-xs pt-1">
+              <div class="flex items-center gap-5">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-sm bg-gradient-to-t from-cyan-500 to-[#00f5d4]"></span>
+                  <span class="text-slate-600 font-medium">Pengunjung Katalog (Views)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-sm bg-gradient-to-t from-rose-500 to-[#ff1e7a]"></span>
+                  <span class="text-slate-600 font-medium">Klik Checkout Lynk.id</span>
+                </div>
+              </div>
+              <div id="chart-summary-stats" class="text-slate-500 font-medium tabular-nums">
+                Rata-rata: <strong class="text-slate-900">0 views/hari</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTTOM SPLIT: TOP PRODUCTS & AUDIT LOG -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 admin-card rounded-2xl p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-heading text-sm font-bold text-slate-900">Performa Produk Teratas</h3>
+                  <p class="text-[11px] text-slate-500">Diurutkan berdasarkan konversi klik link Lynk.id tertinggi</p>
+                </div>
+                <button onclick="switchAdminTab('products')" class="text-xs font-bold text-cyan-700 hover:underline">Semua Produk</button>
+              </div>
+              <div id="admin-top-products-list" class="space-y-2.5"></div>
+            </div>
+
+            <div class="lg:col-span-5 admin-card rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Log Aktivitas Sistem</h3>
+                    <p class="text-[11px] text-slate-500">Rekam jejak perubahan katalog di database</p>
+                  </div>
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                </div>
+                <div id="admin-activity-log" class="space-y-2.5 max-h-64 overflow-y-auto pr-1"></div>
+              </div>
+              <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Sinkronisasi: <strong class="text-emerald-600">Aktif</strong></span>
+                <button onclick="clearActivityLog()" class="hover:text-slate-800 underline">Bersihkan Tampilan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: KELOLA PRODUK & LYNK.ID -->
+        <div id="adm-view-products" class="hidden space-y-5">
+          <div class="admin-card rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+              <div class="relative flex-1 max-w-md">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="adm-prod-search" oninput="renderAdminProducts()" placeholder="Cari nama produk, deskripsi, atau link Lynk.id..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-cyan-500" />
+              </div>
+
+              <select id="adm-prod-cat-filter" onchange="renderAdminProducts()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:bg-white focus:border-cyan-500">
+                <option value="all">Semua Kategori</option>
+              </select>
+
+              <select id="adm-prod-badge-filter" onchange="renderAdminProducts()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-medium focus:outline-none focus:bg-white focus:border-cyan-500">
+                <option value="all">Semua Status Badge</option>
+                <option value="Best Seller">Best Seller</option>
+                <option value="Hot">Hot</option>
+                <option value="Populer">Populer</option>
+                <option value="Baru">Baru</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2.5 self-end lg:self-center">
+              <button onclick="openProductModal()" class="px-4 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm flex items-center gap-2 transition">
+                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Produk
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th class="py-3.5 px-4">Produk Digital</th>
+                    <th class="py-3.5 px-4">Kategori & Badge</th>
+                    <th class="py-3.5 px-4">Harga & Promo</th>
+                    <th class="py-3.5 px-4">Link Checkout Lynk.id</th>
+                    <th class="py-3.5 px-4 text-center">Unggulan</th>
+                    <th class="py-3.5 px-4 text-right">Aksi CRUD</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-product-table-body" class="divide-y divide-slate-200/80 text-xs"></tbody>
+              </table>
+            </div>
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+              <span id="admin-product-showing-text">Menampilkan 0 produk</span>
+              <span class="text-[11px]">Tips: Klik ikon <strong class="text-slate-700">Salin</strong> untuk menyalin URL Lynk.id dengan cepat.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: KELOLA KATEGORI -->
+        <div id="adm-view-categories" class="hidden space-y-5">
+          <div class="admin-card rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-heading text-base font-bold text-slate-900">Manajemen Kategori Katalog</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Atur pengelompokan produk, ikon visual, dan tema warna untuk memudahkan navigasi pembeli.</p>
+            </div>
+            <button onclick="openCategoryModal()" class="px-4 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm flex items-center gap-2 self-start sm:self-center transition">
+              <i data-lucide="folder-plus" class="w-4 h-4"></i> + Kategori Baru
+            </button>
+          </div>
+
+          <div id="admin-categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- TAB 4: PENGATURAN TOKO, BACKUP & AKUN SUPABASE AUTH -->
+        <div id="adm-view-settings" class="hidden space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Konfigurasi Toko Publik -->
+            <div class="lg:col-span-7 space-y-6">
+              <div class="admin-card rounded-2xl p-6 space-y-5">
+                <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                  <div class="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 border border-cyan-200/70 flex items-center justify-center">
+                    <i data-lucide="store" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Konfigurasi Katalog Publik & CS</h3>
+                    <p class="text-[11px] text-slate-500">Sesuaikan informasi kontak WhatsApp dan tampilan Hero halaman depan</p>
+                  </div>
+                </div>
+
+                <form onsubmit="submitStoreSettings(event)" class="space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp CS (Format 628...)</label>
+                      <input type="text" id="setting-wa-number" required placeholder="6281234567890" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1.5">Produk Sorotan di Hero Banner</label>
+                      <select id="setting-hero-product" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500"></select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Teks Badge Hero</label>
+                    <input type="text" id="setting-hero-badge" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Deskripsi Singkat Hero</label>
+                    <textarea id="setting-hero-sub" rows="2" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500"></textarea>
+                  </div>
+
+                  <div class="pt-2 flex justify-end">
+                    <button type="submit" id="btn-save-store-settings" class="px-5 py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
+                      <i data-lucide="save" class="w-4 h-4"></i> Simpan Konfigurasi Toko
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Export Backup JSON -->
+              <div class="admin-card rounded-2xl p-6 space-y-4">
+                <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                  <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200/70 flex items-center justify-center">
+                    <i data-lucide="download-cloud" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Cadangan Data (Export JSON)</h3>
+                    <p class="text-[11px] text-slate-500">Unduh salinan data katalog Supabase ke perangkat Anda.</p>
+                  </div>
+                </div>
+                <button onclick="exportDatabaseJSON()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-800 transition inline-flex items-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4 text-cyan-600"></i> Unduh Backup Katalog (.json)
+                </button>
+              </div>
+            </div>
+
+            <!-- Kredensial Akun Supabase Auth -->
+            <div class="lg:col-span-5">
+              <div class="admin-card rounded-2xl p-6 space-y-5">
+                <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                  <div class="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 border border-pink-200/70 flex items-center justify-center">
+                    <i data-lucide="shield-lock" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-heading text-sm font-bold text-slate-900">Keamanan Akun Supabase Auth</h3>
+                    <p class="text-[11px] text-slate-500">Perbarui password login Administrator Supabase Anda</p>
+                  </div>
+                </div>
+
+                <form onsubmit="submitAdminPasswordUpdate(event)" class="space-y-4">
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Administrator Aktif</label>
+                    <input type="email" id="setting-admin-email" readonly class="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-500 cursor-not-allowed" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Password Baru (Min. 6 Karakter)</label>
+                    <div class="relative">
+                      <input type="password" id="setting-admin-pass" minlength="6" required placeholder="Masukkan password baru" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500 pr-10" />
+                      <button type="button" onclick="togglePasswordVisibility('setting-admin-pass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Konfirmasi Password Baru</label>
+                    <input type="password" id="setting-admin-pass-confirm" minlength="6" required placeholder="Ketik ulang password baru" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+                  </div>
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600 space-y-1">
+                    <p class="font-semibold text-slate-900">Cara Masuk Admin Panel:</p>
+                    <p>&bull; Klik <strong>20x pada logo bulat blokkod3</strong> di pojok kiri atas navbar</p>
+                  </div>
+                  <button type="submit" class="w-full py-2.5 brand-btn-primary text-xs font-bold rounded-xl shadow-sm transition">
+                    Perbarui Password Supabase
+                  </button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- =================== MODAL DIALOGS (LOGIN, CRUD, CONFIRM) ================ -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. MODAL: LOGIN ADMIN (SUPABASE AUTH) -->
+  <div id="admin-login-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-200 text-slate-900">
+      <div class="px-6 py-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-600">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading text-sm font-bold text-slate-900">Login Administrator</h3>
+            <p class="text-[10px] text-slate-500">Autentikasi Supabase Auth blokkod3</p>
+          </div>
+        </div>
+        <button onclick="closeModal('admin-login-modal')" class="p-1.5 rounded-xl bg-slate-200/70 text-slate-600 hover:text-slate-900"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <form onsubmit="submitAdminLogin(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Admin</label>
+          <input type="email" id="admin-email-input" required placeholder="admin@blokkod3.id" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
+          <input type="password" id="admin-password-input" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+        </div>
+        <button type="submit" id="btn-admin-login-submit" class="w-full py-3 brand-btn-primary text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <span>Masuk Command Center</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MODAL: TAMBAH / EDIT PRODUK (UPLOAD GAMBAR + RICH TEXT COPY-PASTE + LIVE PREVIEW) -->
+  <div id="admin-product-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 text-slate-900 w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center">
+            <i data-lucide="package-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 id="product-modal-title" class="font-heading text-sm sm:text-base font-bold text-slate-900">Tambah Produk Digital Baru</h3>
+            <p class="text-[11px] text-slate-500">Upload gambar cover & tempel deskripsi berformat secara langsung</p>
+          </div>
+        </div>
+        <button onclick="closeModal('admin-product-modal')" class="p-1.5 rounded-xl bg-slate-200/70 text-slate-600 hover:text-slate-900"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <form onsubmit="submitProductForm(event)" class="p-5 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <input type="hidden" id="prod-form-id" value="" />
+
+        <div class="lg:col-span-7 space-y-3.5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Produk</label>
+              <select id="upload-cat" oninput="updateProductLivePreview()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500"></select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Label Badge Promo</label>
+              <select id="upload-badge" oninput="updateProductLivePreview()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500">
+                <option value="Best Seller">Best Seller</option>
+                <option value="Hot">Hot</option>
+                <option value="Populer">Populer</option>
+                <option value="Baru">Baru</option>
+                <option value="Limited">Limited</option>
+                <option value="">Tanpa Badge</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama / Judul Produk Digital</label>
+            <input type="text" id="upload-title" required oninput="updateProductLivePreview()" placeholder="Contoh: Full-Stack Next.js AI SaaS Boilerplate" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Harga Jual (Aktif)</label>
+              <input type="text" id="upload-price" required oninput="updateProductLivePreview()" value="Rp 79.000" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Harga Coret (Normal)</label>
+              <input type="text" id="upload-orig-price" oninput="updateProductLivePreview()" value="Rp 159.000" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Rating Bintang</label>
+              <input type="text" id="upload-rating" oninput="updateProductLivePreview()" value="4.9" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Label Ulasan / Terjual</label>
+              <input type="text" id="upload-reviews" oninput="updateProductLivePreview()" value="320+ ulasan" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-cyan-500" />
+            </div>
+          </div>
+
+          <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Gambar Cover Produk</label>
             <div class="space-y-2">
               <div id="upload-dropzone" onclick="document.getElementById('upload-img-file').click()" ondragover="handleImageDragOver(event)" ondragleave="handleImageDragLeave(event)" ondrop="handleImageDrop(event)" class="border-2 border-dashed border-slate-300 hover:border-cyan-500 bg-slate-50/80 hover:bg-cyan-50/40 rounded-2xl p-3.5 text-center cursor-pointer transition group">
@@ -650,7 +1182,8 @@
     // =========================================================================
     let isAdminLoggedIn = false;
     let currentAdminEmail = '';
-    let logoHoldTimer = null;
+    let logoTapCount = 0;
+    let logoTapTimer = null;
     let currentSelectedProduct = null;
     let activeCatalogCategoryFilter = 'all';
     let currentChartMode = 'both';
@@ -677,33 +1210,37 @@
     let activityLogs = [];
 
     // =========================================================================
-    // 4. BACKEND DATA ENGINE (PREVIEW vs SUPABASE REAL-TIME)
+    // 4. SINKRONISASI DATABASE & ANALYTICS ENGINE (PREVIEW & SUPABASE LIVE)
     // =========================================================================
-    function buildEmpty7DaysAnalytics() {
+    function getLast7DaysSkeleton() {
       const days = [];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
-        const dateKey = d.toISOString().slice(0, 10);
-        const label = i === 0
-          ? 'Hari Ini'
-          : d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const dateKey = `${yyyy}-${mm}-${dd}`;
+        const label = i === 0 ? 'Hari Ini' : `${d.getDate()} ${monthNames[d.getMonth()]}`;
         days.push({ date_key: dateKey, label, views: 0, clicks: 0 });
       }
       return days;
     }
 
     async function loadAllDataFromBackend() {
+      const skeleton7d = getLast7DaysSkeleton();
+
       if (IS_PREVIEW || !supabaseClient) {
         categoriesData = JSON.parse(JSON.stringify(PREVIEW_CATEGORIES));
         productsData = JSON.parse(JSON.stringify(PREVIEW_PRODUCTS));
-        dailyViewersData = buildEmpty7DaysAnalytics().map((d, idx) => ({
+        dailyViewersData = skeleton7d.map((d, idx) => ({
           ...d,
-          views: 15 + idx * 4,
-          clicks: 3 + idx
+          views: 25 + idx * 9,
+          clicks: 5 + idx * 2
         }));
         activityLogs = [
-          { time: 'Baru saja', text: 'Aplikasi siap digunakan', type: 'info' }
+          { time: 'Baru saja', text: 'Aplikasi blokkod3 siap digunakan', type: 'info' }
         ];
         return;
       }
@@ -713,31 +1250,32 @@
           supabaseClient.from('blokkod3_categories').select('*').order('created_at', { ascending: true }),
           supabaseClient.from('blokkod3_products').select('*').order('created_at', { ascending: false }),
           supabaseClient.from('blokkod3_store_settings').select('*').eq('id', 1).maybeSingle(),
-          supabaseClient.from('blokkod3_analytics').select('*').order('date_key', { ascending: true }).limit(7),
+          supabaseClient.from('blokkod3_analytics').select('*').order('date_key', { ascending: true }).limit(14),
           supabaseClient.from('blokkod3_activity_logs').select('*').order('created_at', { ascending: false }).limit(20)
         ]);
 
-        categoriesData = catRes.data || [];
-        productsData = prodRes.data || [];
+        categoriesData = Array.isArray(catRes.data) ? catRes.data : [];
+        productsData = Array.isArray(prodRes.data) ? prodRes.data : [];
         if (setRes.data) {
           storeSettings = { ...storeSettings, ...setRes.data };
         }
 
-        const base7Days = buildEmpty7DaysAnalytics();
-        const dbAnalyticsMap = new Map((anaRes.data || []).map(item => [item.date_key, item]));
-        dailyViewersData = base7Days.map(day => {
-          const found = dbAnalyticsMap.get(day.date_key);
+        const dbAnalytics = Array.isArray(anaRes.data) ? anaRes.data : [];
+        dailyViewersData = skeleton7d.map(day => {
+          const found = dbAnalytics.find(r => r.date_key === day.date_key);
           return found ? { ...day, views: found.views || 0, clicks: found.clicks || 0 } : day;
         });
 
-        activityLogs = (logRes.data || []).map(l => ({
-          time: new Date(l.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-          text: l.detail ? `${l.action}: ${l.detail}` : l.action,
-          type: 'info'
-        }));
+        activityLogs = Array.isArray(logRes.data)
+          ? logRes.data.map(l => ({
+              time: new Date(l.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+              text: l.detail ? `${l.action}: ${l.detail}` : l.action,
+              type: 'info'
+            }))
+          : [];
       } catch (err) {
-        console.error('Supabase fetch error:', err);
-        showToast('Gagal memuat data dari Supabase: ' + (err.message || 'Periksa konfigurasi URL/Key'), 'error');
+        console.error('Gagal memuat data dari Supabase:', err);
+        showToast('Gagal memuat data dari Supabase. Periksa konfigurasi URL & Key.', 'error');
       }
     }
 
@@ -748,22 +1286,21 @@
         renderAdminDashboard();
         renderAdminProducts();
         renderAdminCategories();
+        populateAdminSettingsForm();
       }
       showToast('Data berhasil disinkronkan!', 'success');
     };
 
     async function trackDailyVisit() {
-      const todayKey = new Date().toISOString().slice(0, 10);
       const todayItem = dailyViewersData[dailyViewersData.length - 1];
-      if (todayItem) {
-        todayItem.views = (todayItem.views || 0) + 1;
-      }
+      if (!todayItem) return;
+      todayItem.views = (todayItem.views || 0) + 1;
 
       if (!IS_PREVIEW && supabaseClient) {
         try {
           await supabaseClient.rpc('increment_daily_analytics', {
-            p_date_key: todayKey,
-            p_label: 'Hari Ini',
+            p_date_key: todayItem.date_key,
+            p_label: todayItem.label,
             p_view_inc: 1,
             p_click_inc: 0
           });
@@ -777,7 +1314,6 @@
       if (prod) {
         prod.clicks = (prod.clicks || 0) + 1;
       }
-      const todayKey = new Date().toISOString().slice(0, 10);
       const todayItem = dailyViewersData[dailyViewersData.length - 1];
       if (todayItem) {
         todayItem.clicks = (todayItem.clicks || 0) + 1;
@@ -787,7 +1323,14 @@
         try {
           await Promise.all([
             supabaseClient.rpc('increment_product_metric', { p_prod_id: prodId, p_view_inc: 0, p_click_inc: 1 }),
-            supabaseClient.rpc('increment_daily_analytics', { p_date_key: todayKey, p_label: 'Hari Ini', p_view_inc: 0, p_click_inc: 1 })
+            todayItem
+              ? supabaseClient.rpc('increment_daily_analytics', {
+                  p_date_key: todayItem.date_key,
+                  p_label: todayItem.label,
+                  p_view_inc: 0,
+                  p_click_inc: 1
+                })
+              : Promise.resolve()
           ]);
         } catch (err) {}
       }
@@ -796,12 +1339,10 @@
     };
 
     async function logAdminActivity(action, detail = '', type = 'info') {
-      const nowStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-      activityLogs.unshift({
-        time: nowStr,
-        text: detail ? `${action}: ${detail}` : action,
-        type
-      });
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const text = detail ? `${action}: ${detail}` : action;
+      activityLogs.unshift({ time: timeStr, text, type });
       if (activityLogs.length > 25) activityLogs.pop();
       renderAdminActivityLog();
 
@@ -813,7 +1354,7 @@
     }
 
     // =========================================================================
-    // 5. SECRET TRIGGER (CTRL+ALT+A / ALT+SHIFT+A / LONG-PRESS LOGO / ?admin=1)
+    // 5. SECRET TRIGGER (KLIK 20X PADA LOGO BLOKKOD3)
     // =========================================================================
     function triggerAdminLoginModal() {
       if (isAdminLoggedIn) {
@@ -828,32 +1369,24 @@
       setTimeout(() => { if (emailInput) emailInput.focus(); }, 100);
     }
 
-    // Long-Press 2 detik pada Logo (berfungsi di HP & Desktop)
-    window.startLogoHold = function(e) {
-      if (e && e.button !== undefined && e.button !== 0) return;
-      clearTimeout(logoHoldTimer);
-      logoHoldTimer = setTimeout(() => {
-        triggerAdminLoginModal();
-      }, 2000);
-    };
-
-    window.cancelLogoHold = function() {
-      clearTimeout(logoHoldTimer);
-    };
-
-    // Kombinasi Pintasan Keyboard Andal: CTRL + ALT + A  atau  ALT + SHIFT + A
-    document.addEventListener('keydown', (e) => {
-      const key = (e.key || '').toLowerCase();
-      const isKeyA = e.code === 'KeyA' || key === 'a';
-      const isCtrlAltA = e.ctrlKey && e.altKey && !e.shiftKey && isKeyA;
-      const isAltShiftA = e.altKey && e.shiftKey && !e.ctrlKey && isKeyA;
-
-      if (isCtrlAltA || isAltShiftA) {
-        e.preventDefault();
-        e.stopPropagation();
-        triggerAdminLoginModal();
+    window.handleLogoTap = function(e) {
+      if (e) e.stopPropagation();
+      if (isAdminLoggedIn) {
+        returnToAdminPanel();
+        return;
       }
-    }, true);
+      logoTapCount++;
+      clearTimeout(logoTapTimer);
+
+      if (logoTapCount >= 20) {
+        logoTapCount = 0;
+        triggerAdminLoginModal();
+      } else {
+        logoTapTimer = setTimeout(() => {
+          logoTapCount = 0;
+        }, 4000);
+      }
+    };
 
     window.submitAdminLogin = async function(e) {
       e.preventDefault();
@@ -864,7 +1397,7 @@
       if (IS_PREVIEW) {
         closeModal('admin-login-modal');
         enterAdminWorkspace(emailVal || 'admin@blokkod3.id');
-        showToast('Berhasil masuk ke Admin Panel (Mode Preview)', 'success');
+        showToast('Berhasil masuk ke Admin Panel!', 'success');
         return;
       }
 
@@ -2437,12 +2970,6 @@
             document.getElementById('admin-preview-bar').classList.remove('hidden');
           }
         } catch (err) {}
-      }
-
-      // Buka otomatis modal login admin jika URL memiliki parameter ?admin=1 atau #admin
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('admin') === '1' || window.location.hash === '#admin') {
-        triggerAdminLoginModal();
       }
 
       if (window.lucide) lucide.createIcons();
