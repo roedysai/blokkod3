@@ -107,6 +107,25 @@
     .rich-desc-output a {
       color: #0891b2;
       text-decoration: underline;
+      word-break: break-all;
+    }
+    .rich-desc-output {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .rich-desc-output h1,
+    .rich-desc-output h2,
+    .rich-desc-output h3,
+    .rich-desc-output h4 {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.95rem;
+      margin-top: 0.65rem;
+      margin-bottom: 0.35rem;
+    }
+    .desc-clamped {
+      max-height: 170px;
+      overflow: hidden;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -311,16 +330,16 @@
           </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm items-start">
           <!-- Gambar Produk -->
-          <div class="lg:col-span-5 space-y-4">
+          <div class="lg:col-span-5 space-y-4 lg:sticky lg:top-24">
             <div id="detail-img-container" class="w-full h-72 sm:h-96 rounded-2xl bg-slate-900 text-white flex flex-col items-center justify-center p-6 text-center shadow-md relative overflow-hidden">
               <!-- Diisi via JS -->
             </div>
           </div>
 
           <!-- Info Produk & Tombol Lynk.id -->
-          <div class="lg:col-span-7 space-y-5 flex flex-col justify-between">
+          <div class="lg:col-span-7 min-w-0 space-y-5 flex flex-col justify-between">
             <div class="space-y-4">
               <div>
                 <div class="flex items-center gap-2">
@@ -346,8 +365,19 @@
                 <span id="detail-discount-badge" class="bg-emerald-100 text-emerald-700 text-xs font-extrabold px-2.5 py-0.5 rounded-lg">Hemat 50%</span>
               </div>
 
-              <div id="detail-desc" class="rich-desc-output text-xs sm:text-sm text-slate-600 leading-relaxed py-2">
-                Deskripsi lengkap produk digital blokkod3.
+              <!-- Deskripsi Produk dengan Auto-Collapse agar Tampilan Tetap Rapi -->
+              <div class="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 space-y-2">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Deskripsi Produk</p>
+                <div id="detail-desc-wrapper" class="relative desc-clamped transition-all duration-300">
+                  <div id="detail-desc" class="rich-desc-output text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    Deskripsi lengkap produk digital blokkod3.
+                  </div>
+                  <div id="detail-desc-fade" class="hidden pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 via-slate-50/85 to-transparent"></div>
+                </div>
+                <button type="button" id="detail-desc-toggle-btn" onclick="toggleDetailDescription()" class="hidden inline-flex items-center gap-1.5 text-xs font-bold text-cyan-700 hover:text-cyan-800 pt-1 transition">
+                  <span id="detail-desc-toggle-label">Baca Selengkapnya</span>
+                  <i data-lucide="chevron-down" id="detail-desc-toggle-icon" class="w-3.5 h-3.5 transition-transform"></i>
+                </button>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-700 pt-2">
@@ -1112,7 +1142,7 @@
     // =========================================================================
     // 1. SAKLAR DEPLOYMENT & KONFIGURASI SUPABASE
     // =========================================================================
-    const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY ke GitHub Pages agar terhubung 100% ke Supabase
+const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY ke GitHub Pages agar terhubung 100% ke Supabase
     const SUPABASE_URL = "https://eruxyvrnjjvyzjhnhpkp.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_h698oZ6stynKa0wiAIg9BA_JmD5HuXD";
     const SUPABASE_STORAGE_BUCKET = "blokkod3-products"; // Bucket Supabase Storage untuk upload gambar produk
@@ -1534,6 +1564,11 @@
       return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
     }
 
+    function truncatePlainText(text, maxLen = 110) {
+      if (!text) return '';
+      return text.length > maxLen ? text.slice(0, maxLen).trim() + '...' : text;
+    }
+
     function sanitizeRichHtml(rawHtml) {
       if (!rawHtml) return '';
       const allowedTags = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'UL', 'OL', 'LI', 'A', 'DIV', 'SPAN', 'H1', 'H2', 'H3', 'H4']);
@@ -1638,12 +1673,12 @@
                 : `<div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-cyan-400 to-pink-500 flex items-center justify-center text-slate-950 font-black text-2xl shadow-md">AI</div>`
               }
               <h4 class="font-heading text-sm font-bold text-white line-clamp-1">${heroProd.title}</h4>
-              <p class="text-[11px] text-slate-400 line-clamp-2">${heroProd.description || ''}</p>
+              <p class="text-[11px] text-slate-400 line-clamp-2 break-words">${truncatePlainText(stripHtmlTags(heroProd.description || ''), 110)}</p>
               <div class="flex items-center justify-center gap-2 pt-1">
                 <span class="font-heading text-sm font-extrabold text-[#00f5d4]">${heroProd.price}</span>
                 <span class="text-[10px] text-slate-500 line-through">${heroProd.orig_price || ''}</span>
               </div>
-              <button onclick="openProductDetail('${heroProd.id}')" class="w-full py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow transition">
+              <button type="button" onclick="openProductDetail('${heroProd.id}')" class="w-full py-2.5 brand-btn-primary rounded-xl text-xs font-bold shadow transition">
                 Lihat Detail Produk
               </button>
             </div>
@@ -1719,8 +1754,8 @@
               <p class="text-[10px] text-slate-400 line-through">${prod.orig_price || ''}</p>
             </div>
             <div class="flex items-center gap-1.5">
-              <button onclick="openProductDetail('${prod.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[11px] font-bold transition">Detail</button>
-              <a href="${prod.lynk_url || 'https://lynk.id'}" target="_blank" rel="noopener noreferrer" onclick="recordProductClick('${prod.id}')" class="px-3 py-1.5 brand-btn-primary rounded-xl text-[11px] font-bold shadow-sm transition flex items-center gap-1">
+              <button type="button" onclick="event.stopPropagation(); openProductDetail('${prod.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[11px] font-bold transition">Detail</button>
+              <a href="${prod.lynk_url || 'https://lynk.id'}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation(); recordProductClick('${prod.id}')" class="px-3 py-1.5 brand-btn-primary rounded-xl text-[11px] font-bold shadow-sm transition flex items-center gap-1">
                 <span>Beli</span> <i data-lucide="external-link" class="w-3 h-3"></i>
               </a>
             </div>
@@ -1801,7 +1836,7 @@
         const matchCat = activeCatalogCategoryFilter === 'all' || p.cat_id === activeCatalogCategoryFilter;
         const matchQuery = !q ||
           (p.title || '').toLowerCase().includes(q) ||
-          (p.description || '').toLowerCase().includes(q) ||
+          stripHtmlTags(p.description || '').toLowerCase().includes(q) ||
           getCategoryName(p.cat_id).toLowerCase().includes(q);
         return matchCat && matchQuery;
       });
@@ -1823,7 +1858,7 @@
       if (!list || list.length === 0) {
         grid.innerHTML = `
           <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200 p-6 space-y-2">
-            <p class="font-heading text-sm font-bold text-slate-800">Belum ada produk ditemukan</p>
+            <p class="font-heading text-sm font-bold text-slate-800">Produk tidak ditemukan</p>
             <p class="text-xs text-slate-500">Coba kata kunci lain atau pilih kategori "Semua Kategori".</p>
             <button onclick="setCatalogCategoryFilter('all')" class="mt-2 px-4 py-2 brand-btn-primary rounded-xl text-xs font-bold">Reset Filter</button>
           </div>`;
@@ -1847,76 +1882,141 @@
       applyCatalogFilters();
     };
 
-    window.openProductDetail = async function(prodId) {
+    let isDetailDescExpanded = false;
+
+    function setupDetailDescriptionClamp() {
+      const wrapper = document.getElementById('detail-desc-wrapper');
+      const content = document.getElementById('detail-desc');
+      const fade = document.getElementById('detail-desc-fade');
+      const toggleBtn = document.getElementById('detail-desc-toggle-btn');
+      const toggleLabel = document.getElementById('detail-desc-toggle-label');
+      const toggleIcon = document.getElementById('detail-desc-toggle-icon');
+      if (!wrapper || !content || !fade || !toggleBtn) return;
+
+      isDetailDescExpanded = false;
+      wrapper.classList.remove('desc-clamped');
+
+      requestAnimationFrame(() => {
+        const isOverflowing = content.scrollHeight > 180;
+        if (isOverflowing) {
+          wrapper.classList.add('desc-clamped');
+          fade.classList.remove('hidden');
+          toggleBtn.classList.remove('hidden');
+          if (toggleLabel) toggleLabel.textContent = 'Baca Selengkapnya';
+          if (toggleIcon) toggleIcon.style.transform = 'rotate(0deg)';
+        } else {
+          wrapper.classList.remove('desc-clamped');
+          fade.classList.add('hidden');
+          toggleBtn.classList.add('hidden');
+        }
+      });
+    }
+
+    window.toggleDetailDescription = function() {
+      const wrapper = document.getElementById('detail-desc-wrapper');
+      const fade = document.getElementById('detail-desc-fade');
+      const toggleLabel = document.getElementById('detail-desc-toggle-label');
+      const toggleIcon = document.getElementById('detail-desc-toggle-icon');
+      if (!wrapper || !fade) return;
+
+      isDetailDescExpanded = !isDetailDescExpanded;
+      if (isDetailDescExpanded) {
+        wrapper.classList.remove('desc-clamped');
+        fade.classList.add('hidden');
+        if (toggleLabel) toggleLabel.textContent = 'Tampilkan Lebih Ringkas';
+        if (toggleIcon) toggleIcon.style.transform = 'rotate(180deg)';
+      } else {
+        wrapper.classList.add('desc-clamped');
+        fade.classList.remove('hidden');
+        if (toggleLabel) toggleLabel.textContent = 'Baca Selengkapnya';
+        if (toggleIcon) toggleIcon.style.transform = 'rotate(0deg)';
+      }
+    };
+
+    window.openProductDetail = function(prodId) {
+      if (!prodId || prodId === 'preview-id') return;
       const prod = productsData.find(p => p.id === prodId) || productsData[0];
       if (!prod) return;
       currentSelectedProduct = prod;
 
       prod.views = (prod.views || 0) + 1;
-      if (!IS_PREVIEW && supabaseClient) {
-        supabaseClient.rpc('increment_product_metric', { p_prod_id: prod.id, p_view_inc: 1, p_click_inc: 0 }).catch(() => {});
-      }
 
       const catName = getCategoryName(prod.cat_id);
       const disc = calculateDiscountPercent(prod.price, prod.orig_price);
 
-      document.getElementById('detail-breadcrumb-cat').textContent = catName;
-      document.getElementById('detail-breadcrumb-title').textContent = prod.title;
-      document.getElementById('detail-cat-badge').textContent = catName;
-      document.getElementById('detail-promo-badge').textContent = prod.badge || 'Produk Digital';
-      document.getElementById('detail-title').textContent = prod.title;
-      document.getElementById('detail-rating').textContent = prod.rating || '4.9';
-      document.getElementById('detail-reviews').textContent = prod.reviews || '100+ ulasan';
-      document.getElementById('detail-clicks-info').textContent = `${prod.clicks || 0}x diakses pembeli`;
-      document.getElementById('detail-price').textContent = prod.price;
-      document.getElementById('detail-original-price').textContent = prod.orig_price || '';
-
+      const elBreadCat = document.getElementById('detail-breadcrumb-cat');
+      const elBreadTitle = document.getElementById('detail-breadcrumb-title');
+      const elCatBadge = document.getElementById('detail-cat-badge');
+      const elPromoBadge = document.getElementById('detail-promo-badge');
+      const elTitle = document.getElementById('detail-title');
+      const elRating = document.getElementById('detail-rating');
+      const elReviews = document.getElementById('detail-reviews');
+      const elClicksInfo = document.getElementById('detail-clicks-info');
+      const elPrice = document.getElementById('detail-price');
+      const elOrigPrice = document.getElementById('detail-original-price');
       const discBadge = document.getElementById('detail-discount-badge');
-      if (disc > 0) {
-        discBadge.textContent = `Hemat ${disc}%`;
-        discBadge.classList.remove('hidden');
-      } else {
-        discBadge.classList.add('hidden');
+      const elDesc = document.getElementById('detail-desc');
+      const elLynkBtn = document.getElementById('detail-lynk-btn');
+      const elWaBtn = document.getElementById('detail-wa-btn');
+
+      if (elBreadCat) elBreadCat.textContent = catName;
+      if (elBreadTitle) elBreadTitle.textContent = prod.title;
+      if (elCatBadge) elCatBadge.textContent = catName;
+      if (elPromoBadge) elPromoBadge.textContent = prod.badge || 'Produk Digital';
+      if (elTitle) elTitle.textContent = prod.title;
+      if (elRating) elRating.textContent = prod.rating || '4.9';
+      if (elReviews) elReviews.textContent = prod.reviews || '100+ ulasan';
+      if (elClicksInfo) elClicksInfo.textContent = `${prod.clicks || 0}x diakses pembeli`;
+      if (elPrice) elPrice.textContent = prod.price;
+      if (elOrigPrice) elOrigPrice.textContent = prod.orig_price || '';
+
+      if (discBadge) {
+        if (disc > 0) {
+          discBadge.textContent = `Hemat ${disc}%`;
+          discBadge.classList.remove('hidden');
+        } else {
+          discBadge.classList.add('hidden');
+        }
       }
 
-      document.getElementById('detail-desc').innerHTML = formatDescriptionForDisplay(prod.description || '');
-      document.getElementById('detail-lynk-btn').href = prod.lynk_url || 'https://lynk.id';
+      if (elDesc) elDesc.innerHTML = formatDescriptionForDisplay(prod.description || '');
+      if (elLynkBtn) elLynkBtn.href = prod.lynk_url || 'https://lynk.id';
 
       const waNum = (storeSettings.wa_number || '6281234567890').replace(/[^0-9]/g, '');
       const waMsg = encodeURIComponent(`Halo CS blokkod3, saya ingin bertanya tentang produk *${prod.title}* (${prod.price}).`);
-      document.getElementById('detail-wa-btn').href = `https://wa.me/${waNum}?text=${waMsg}`;
+      if (elWaBtn) elWaBtn.href = `https://wa.me/${waNum}?text=${waMsg}`;
 
       const imgContainer = document.getElementById('detail-img-container');
-      if (prod.img_url) {
-        imgContainer.innerHTML = `<img src="${prod.img_url}" alt="${prod.title}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/00f5d4?text=blokkod3';" class="w-full h-full object-cover rounded-xl" />`;
-      } else {
-        imgContainer.innerHTML = `
-          <span class="absolute top-4 left-4 bg-[#ff1e7a] text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">${prod.badge || 'Digital Product'}</span>
-          <div class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#00f5d4] to-[#ff1e7a] flex items-center justify-center text-slate-950 font-black text-3xl shadow-xl mb-4">
-            b3
-          </div>
-          <h3 class="font-heading text-lg font-bold max-w-xs">${prod.title}</h3>
-          <p class="text-xs text-cyan-300 mt-1">${catName}</p>
-        `;
+      if (imgContainer) {
+        if (prod.img_url) {
+          imgContainer.innerHTML = `<img src="${prod.img_url}" alt="${prod.title}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/00f5d4?text=blokkod3';" class="w-full h-full object-cover rounded-xl" />`;
+        } else {
+          imgContainer.innerHTML = `
+            <span class="absolute top-4 left-4 bg-[#ff1e7a] text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">${prod.badge || 'Digital Product'}</span>
+            <div class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#00f5d4] to-[#ff1e7a] flex items-center justify-center text-slate-950 font-black text-3xl shadow-xl mb-4">
+              b3
+            </div>
+            <h3 class="font-heading text-lg font-bold max-w-xs">${prod.title}</h3>
+            <p class="text-xs text-cyan-300 mt-1">${catName}</p>
+          `;
+        }
       }
 
       switchView('detail');
+      setupDetailDescriptionClamp();
       if (window.lucide) lucide.createIcons();
-    };
 
-    // =========================================================================
-    // 8. ADMIN PANEL WORKSPACE & NAVIGATION
-    // =========================================================================
-    window.toggleAdminMobileSidebar = function(show) {
-      const sidebar = document.getElementById('admin-sidebar');
-      const backdrop = document.getElementById('admin-sidebar-backdrop');
-      if (!sidebar || !backdrop) return;
-      if (show) {
-        sidebar.classList.remove('-translate-x-full');
-        backdrop.classList.remove('hidden');
-      } else {
-        sidebar.classList.add('-translate-x-full');
-        backdrop.classList.add('hidden');
+      // Catat view produk ke Supabase secara asynchronous agar tidak memblokir tampilan
+      if (!IS_PREVIEW && supabaseClient) {
+        (async () => {
+          try {
+            await supabaseClient.rpc('increment_product_metric', {
+              p_prod_id: prod.id,
+              p_view_inc: 1,
+              p_click_inc: 0
+            });
+          } catch (err) {}
+        })();
       }
     };
 
@@ -2449,10 +2549,33 @@
       updateProductLivePreview();
     };
 
+    // Kompresi gambar ringan sebagai cadangan otomatis jika bucket Storage belum dibuat
+    function compressImageForFallback(file, maxWidth = 900, quality = 0.8) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onerror = () => reject(new Error('Format gambar tidak valid.'));
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
     async function uploadProductImageToSupabase(file) {
       if (!file) return null;
       if (IS_PREVIEW || !supabaseClient) {
-        return pendingProductImageObjectUrl;
+        return await compressImageForFallback(file);
       }
 
       const ext = (file.name.split('.').pop() || 'png').toLowerCase();
@@ -2463,7 +2586,9 @@
         .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
       if (uploadErr) {
-        throw new Error(`Upload gambar gagal: ${uploadErr.message}. Pastikan bucket "${SUPABASE_STORAGE_BUCKET}" bersifat Public di Supabase Storage.`);
+        console.warn('Supabase Storage upload fallback aktif:', uploadErr.message);
+        showToast('Bucket Storage belum dibuat — gambar dikompresi & disimpan otomatis ke database.', 'info');
+        return await compressImageForFallback(file);
       }
 
       const { data: publicData } = supabaseClient.storage
